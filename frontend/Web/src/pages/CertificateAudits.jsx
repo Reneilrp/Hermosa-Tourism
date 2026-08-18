@@ -8,7 +8,7 @@ import {
   X,
 } from 'lucide-react';
 
-export default function CertificateAudits({ pois, onUpdateCertStatus }) {
+export default function CertificateAudits({ pois }) {
   const [filterStatus, setFilterStatus] = useState('all');
   const [search, setSearch] = useState('');
 
@@ -38,40 +38,19 @@ export default function CertificateAudits({ pois, onUpdateCertStatus }) {
 
   return (
     <div className="space-y-4">
-      {/* Status Filter Buttons & Search Query Strip */}
-      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
-        {/* Status Filter Buttons */}
-        <div className="flex items-center gap-1.5 overflow-x-auto">
-          <span className="text-xs font-bold text-slate-500 mr-1">Filter Status:</span>
-          {[
-            { id: 'all', label: `All Certs (${certificates.length})` },
-            { id: 'approved', label: 'Approved & Active' },
-            { id: 'pending', label: 'Under Review' },
-          ].map((s) => (
-            <button
-              key={s.id}
-              onClick={() => setFilterStatus(s.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                filterStatus === s.id
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Search Query placed directly beside status filter */}
-        <div className="flex items-center gap-2.5 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-64">
+      {/* Single-Row Filter Strip with Search on the LEFT */}
+      <div className="flex items-center justify-between gap-3 bg-white p-3 rounded-2xl border border-slate-200 shadow-xs">
+        {/* Left Side: Search (First on Left) + Status Filter */}
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          {/* 🔍 Search Input on the LEFT */}
+          <div className="relative flex-1 max-w-sm">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search cert ID, body, or venue..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-2 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
             />
             {search.length > 0 && (
               <button
@@ -83,14 +62,26 @@ export default function CertificateAudits({ pois, onUpdateCertStatus }) {
             )}
           </div>
 
-          <div className="hidden md:flex items-center gap-1 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 shrink-0">
-            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
-            <span>NCMF Compliant</span>
-          </div>
+          {/* Status Dropdown */}
+          <select
+            value={filterStatus}
+            onChange={(e) => setFilterStatus(e.target.value)}
+            className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer shrink-0 transition-colors"
+          >
+            <option value="all">📜 All Certs ({certificates.length})</option>
+            <option value="approved">✅ Approved & Active</option>
+            <option value="pending">⏳ Under Review</option>
+          </select>
+        </div>
+
+        {/* Right Compliance Tag */}
+        <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-2 rounded-xl border border-emerald-200 shrink-0">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>NCMF & Council Verified</span>
         </div>
       </div>
 
-      {/* Verification Cards */}
+      {/* Verification Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {filteredCerts.map((cert) => (
           <div
