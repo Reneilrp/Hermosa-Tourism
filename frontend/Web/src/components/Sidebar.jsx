@@ -13,7 +13,7 @@ import {
 export default function Sidebar({ activeTab, setActiveTab }) {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard Overview', icon: LayoutDashboard, badge: null },
-    { id: 'pois', label: 'Place & Mosque Directory', icon: MapPin, badge: '13' },
+    { id: 'pois', label: 'Place & Mosque Directory', icon: MapPin, badge: '16' },
     { id: 'certificates', label: 'Halal Certificate Audits', icon: FileCheck2, badge: '3 Active' },
     { id: 'mosques', label: 'Mosque & Prayer Facilities', icon: Moon, badge: '8' },
     { id: 'reviews', label: 'Community Review Moderation', icon: MessageSquare, badge: 'New' },

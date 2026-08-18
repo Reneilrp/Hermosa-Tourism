@@ -14,24 +14,24 @@ class ZamboangaPoiSeeder extends Seeder
     {
         // 1. Create Core Halal & Mosque Amenities
         $amenities = [
-            'massive_wudu' => Amenity::create(['code' => 'massive_wudu', 'label' => 'Grand Multi-Station Ablution Area', 'icon' => 'water']),
-            'wudu_area' => Amenity::create(['code' => 'wudu_area', 'label' => 'Running Water Wudu Stations', 'icon' => 'water']),
-            'female_section' => Amenity::create(['code' => 'female_section', 'label' => 'Dedicated Female Prayer Hall/Mezzanine', 'icon' => 'people']),
-            'air_conditioned' => Amenity::create(['code' => 'air_conditioned', 'label' => 'Air-Cooled Prayer Halls', 'icon' => 'snow']),
-            'parking' => Amenity::create(['code' => 'parking', 'label' => 'Visitor Parking Available', 'icon' => 'car']),
-            'qibla_aligned' => Amenity::create(['code' => 'qibla_aligned', 'label' => 'Precision Aligned Qibla Mihrab', 'icon' => 'compass']),
-            'wheelchair' => Amenity::create(['code' => 'wheelchair', 'label' => 'Wheelchair Accessible Ramps', 'icon' => 'body']),
-            'near_wmsu' => Amenity::create(['code' => 'near_wmsu', 'label' => 'Walking Distance to WMSU Campus', 'icon' => 'school']),
-            'heritage_marker' => Amenity::create(['code' => 'heritage_marker', 'label' => 'Official NHCP Heritage Marker', 'icon' => 'ribbon']),
-            'halal_kitchen' => Amenity::create(['code' => 'halal_kitchen', 'label' => '100% Halal Certified Kitchen', 'icon' => 'checkmark-circle']),
-            'prayer_room' => Amenity::create(['code' => 'prayer_room', 'label' => 'Customer Musalla / Prayer Room', 'icon' => 'moon']),
-            'alcohol_free' => Amenity::create(['code' => 'alcohol_free', 'label' => 'Strictly No Alcohol Served', 'icon' => 'ban']),
-            'muslim_owned' => Amenity::create(['code' => 'muslim_owned', 'label' => '100% Muslim-Owned & Operated', 'icon' => 'heart-circle']),
-            'halal_meat' => Amenity::create(['code' => 'halal_meat', 'label' => 'Fresh Halal Butchered Meat', 'icon' => 'checkmark-circle']),
-            'market_musalla' => Amenity::create(['code' => 'market_musalla', 'label' => 'Market Musalla Available', 'icon' => 'moon']),
-            'card_payments' => Amenity::create(['code' => 'card_payments', 'label' => 'Cash & GCash Accepted', 'icon' => 'card']),
-            'guided_tours' => Amenity::create(['code' => 'guided_tours', 'label' => 'Guided Cultural Tours', 'icon' => 'mic']),
-            'family_friendly' => Amenity::create(['code' => 'family_friendly', 'label' => 'Courtyards & Open Gardens', 'icon' => 'people']),
+            'massive_wudu' => Amenity::firstOrCreate(['code' => 'massive_wudu'], ['label' => 'Grand Multi-Station Ablution Area', 'icon' => 'water']),
+            'wudu_area' => Amenity::firstOrCreate(['code' => 'wudu_area'], ['label' => 'Running Water Wudu Stations', 'icon' => 'water']),
+            'female_section' => Amenity::firstOrCreate(['code' => 'female_section'], ['label' => 'Dedicated Female Prayer Hall/Mezzanine', 'icon' => 'people']),
+            'air_conditioned' => Amenity::firstOrCreate(['code' => 'air_conditioned'], ['label' => 'Air-Cooled Prayer Halls', 'icon' => 'snow']),
+            'parking' => Amenity::firstOrCreate(['code' => 'parking'], ['label' => 'Visitor Parking Available', 'icon' => 'car']),
+            'qibla_aligned' => Amenity::firstOrCreate(['code' => 'qibla_aligned'], ['label' => 'Precision Aligned Qibla Mihrab', 'icon' => 'compass']),
+            'wheelchair' => Amenity::firstOrCreate(['code' => 'wheelchair'], ['label' => 'Wheelchair Accessible Ramps', 'icon' => 'body']),
+            'near_wmsu' => Amenity::firstOrCreate(['code' => 'near_wmsu'], ['label' => 'Walking Distance to WMSU Campus', 'icon' => 'school']),
+            'heritage_marker' => Amenity::firstOrCreate(['code' => 'heritage_marker'], ['label' => 'Official NHCP Heritage Marker', 'icon' => 'ribbon']),
+            'halal_kitchen' => Amenity::firstOrCreate(['code' => 'halal_kitchen'], ['label' => '100% Halal Certified Kitchen', 'icon' => 'checkmark-circle']),
+            'prayer_room' => Amenity::firstOrCreate(['code' => 'prayer_room'], ['label' => 'Customer Musalla / Prayer Room', 'icon' => 'moon']),
+            'alcohol_free' => Amenity::firstOrCreate(['code' => 'alcohol_free'], ['label' => 'Strictly No Alcohol Served', 'icon' => 'ban']),
+            'muslim_owned' => Amenity::firstOrCreate(['code' => 'muslim_owned'], ['label' => '100% Muslim-Owned & Operated', 'icon' => 'heart-circle']),
+            'halal_meat' => Amenity::firstOrCreate(['code' => 'halal_meat'], ['label' => 'Fresh Halal Butchered Meat', 'icon' => 'checkmark-circle']),
+            'market_musalla' => Amenity::firstOrCreate(['code' => 'market_musalla'], ['label' => 'Market Musalla Available', 'icon' => 'moon']),
+            'card_payments' => Amenity::firstOrCreate(['code' => 'card_payments'], ['label' => 'Cash & GCash Accepted', 'icon' => 'card']),
+            'guided_tours' => Amenity::firstOrCreate(['code' => 'guided_tours'], ['label' => 'Guided Cultural Tours', 'icon' => 'mic']),
+            'family_friendly' => Amenity::firstOrCreate(['code' => 'family_friendly'], ['label' => 'Courtyards & Open Gardens', 'icon' => 'people']),
         ];
 
         // 2. Sadik Grand Mosque (Mercedes) - Largest in Zamboanga City
@@ -231,7 +231,111 @@ class ZamboangaPoiSeeder extends Seeder
             'valid_until' => '2027-12-31',
         ]);
 
-        // 7. Canelar Barter Trade Center
+        // 7. Dennis Coffee Garden (San Jose)
+        $dennis = Poi::create([
+            'custom_id' => 'poi-dennis-coffee',
+            'name' => 'Dennis Coffee Garden (San Jose)',
+            'slug' => 'dennis-coffee-garden-san-jose',
+            'category' => 'dining',
+            'tier' => 'tier2',
+            'latitude' => 6.9210,
+            'longitude' => 122.0620,
+            'address' => 'San Jose Road, Barangay San Jose, Zamboanga City',
+            'phone' => '+63 62 991 4488',
+            'cuisine' => 'Authentic Tausug Coffee (Kahawa Sug) & Native Pastries',
+            'price_range' => '$$',
+            'operating_hours' => '08:00 AM - 10:00 PM',
+            'image_url' => 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80',
+            'description' => 'Iconic heritage cafe celebrating the rich coffee and culinary traditions of Sulu. Famous for authentic Kahawa Sug (Sulu native coffee), Jaa, Bangbang Sug pastries, and warm garden ambiance.',
+            'popular_items' => ['Kahawa Sug Native Brew', 'Bangbang Sug Pastry Platter', 'Durian Coffee', 'Beef Kulma Rice'],
+            'rating' => 4.90,
+            'review_count' => 340,
+            'is_verified' => true,
+        ]);
+        $dennis->amenities()->attach([
+            $amenities['muslim_owned']->id,
+            $amenities['prayer_room']->id,
+            $amenities['alcohol_free']->id,
+            $amenities['air_conditioned']->id,
+        ]);
+        HalalCertificate::create([
+            'poi_id' => $dennis->id,
+            'cert_body' => 'Muslim-Owned Cultural Heritage Cafe',
+            'cert_number' => 'MO-ZAM-DCG-05',
+            'status' => 'approved',
+            'valid_until' => '2027-10-31',
+        ]);
+
+        // 8. Al-Sultan Halal Restaurant & Bakeshop
+        $alSultan = Poi::create([
+            'custom_id' => 'poi-al-sultan',
+            'name' => 'Al-Sultan Halal Restaurant & Bakeshop',
+            'slug' => 'al-sultan-halal-restaurant',
+            'category' => 'dining',
+            'tier' => 'tier1',
+            'latitude' => 6.9175,
+            'longitude' => 122.0780,
+            'address' => 'Veterans Avenue, Downtown, Zamboanga City',
+            'phone' => '+63 62 992 3344',
+            'cuisine' => 'Middle Eastern, Tausug & Halal Pastries',
+            'price_range' => '$$',
+            'operating_hours' => '09:00 AM - 09:00 PM',
+            'image_url' => 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80',
+            'description' => 'Renowned Halal dining destination on Veterans Avenue featuring savory Biryani, Shawarma platters, Tiula Itum, and freshly baked Middle Eastern & Tausug halal pastries.',
+            'popular_items' => ['Chicken Mandi & Biryani', 'Beef Tiula Itum Platter', 'Fresh Baklava & Native Cakes'],
+            'rating' => 4.80,
+            'review_count' => 290,
+            'is_verified' => true,
+        ]);
+        $alSultan->amenities()->attach([
+            $amenities['halal_kitchen']->id,
+            $amenities['prayer_room']->id,
+            $amenities['wudu_area']->id,
+            $amenities['alcohol_free']->id,
+        ]);
+        HalalCertificate::create([
+            'poi_id' => $alSultan->id,
+            'cert_body' => 'NCMF Certified Halal Dining',
+            'cert_number' => 'NCMF-ZAM-2024-189',
+            'status' => 'approved',
+            'valid_until' => '2026-11-30',
+        ]);
+
+        // 9. Mano-Mano Native Halal Grill
+        $manoMano = Poi::create([
+            'custom_id' => 'poi-mano-mano',
+            'name' => 'Mano-Mano Native Halal Grill',
+            'slug' => 'mano-mano-native-halal-grill',
+            'category' => 'dining',
+            'tier' => 'tier2',
+            'latitude' => 6.9160,
+            'longitude' => 122.0680,
+            'address' => 'Gov. Alvarez Street, Zamboanga City',
+            'phone' => '+63 62 991 7766',
+            'cuisine' => 'Grilled Pyanggang, Charcoal Seafood & Native Satti',
+            'price_range' => '$$',
+            'operating_hours' => '11:00 AM - 10:00 PM',
+            'image_url' => 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
+            'description' => 'Casual open-air native barbecue and seafood grill specializing in Pyanggang chicken charred over coconut husks, Curacha in Alavar Halal sauce, and grilled tuna belly.',
+            'popular_items' => ['Charcoal Grilled Chicken Pyanggang', 'Grilled Tuna Panga', 'Curacha with Coconut Sauce'],
+            'rating' => 4.70,
+            'review_count' => 260,
+            'is_verified' => true,
+        ]);
+        $manoMano->amenities()->attach([
+            $amenities['muslim_owned']->id,
+            $amenities['halal_meat']->id,
+            $amenities['alcohol_free']->id,
+        ]);
+        HalalCertificate::create([
+            'poi_id' => $manoMano->id,
+            'cert_body' => 'Muslim-Owned Halal Enterprise',
+            'cert_number' => 'MO-ZAM-MMG-08',
+            'status' => 'approved',
+            'valid_until' => '2027-08-31',
+        ]);
+
+        // 10. Canelar Barter Trade Center
         $canelar = Poi::create([
             'custom_id' => 'poi-canelar',
             'name' => 'Canelar Barter Trade Center & Halal Market',
@@ -258,7 +362,7 @@ class ZamboangaPoiSeeder extends Seeder
             $amenities['card_payments']->id,
         ]);
 
-        // 8. Fort Pilar & Cultural Museum
+        // 11. Fort Pilar & Cultural Museum
         $fortPilar = Poi::create([
             'custom_id' => 'poi-fort-pilar',
             'name' => 'National Museum – Fort Pilar & Cultural Heritage',
@@ -286,7 +390,7 @@ class ZamboangaPoiSeeder extends Seeder
             $amenities['family_friendly']->id,
         ]);
 
-        // 9. Community Mosques in Sta. Barbara, Rio Hondo, Campo Muslim, Kasanyangan, Mampang, Arena Blanco
+        // 12-16. Community Mosques in Sta. Barbara, Rio Hondo, Campo Muslim, Kasanyangan, Mampang, Arena Blanco
         $otherMosques = [
             [
                 'custom_id' => 'poi-sta-barbara',

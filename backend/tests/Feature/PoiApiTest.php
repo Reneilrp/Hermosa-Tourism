@@ -47,7 +47,7 @@ class PoiApiTest extends TestCase
             ]);
 
         $data = $response->json('data');
-        $this->assertCount(13, $data);
+        $this->assertCount(16, $data);
         // Closest to WMSU should be Masjid Baliwasan (~0.2 km)
         $this->assertEquals('Masjid Baliwasan (WMSU Campus Mosque)', $data[0]['name']);
     }
