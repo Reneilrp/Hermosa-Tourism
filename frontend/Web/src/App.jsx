@@ -57,6 +57,20 @@ export default function App() {
     }
   };
 
+  const handleExportJSON = () => {
+    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pois, null, 2));
+    const downloadAnchor = document.createElement('a');
+    downloadAnchor.setAttribute('href', dataStr);
+    downloadAnchor.setAttribute('download', 'zamboanga_city_halal_registry_2026.json');
+    document.body.appendChild(downloadAnchor);
+    downloadAnchor.click();
+    downloadAnchor.remove();
+  };
+
+  const handlePrintReport = () => {
+    window.print();
+  };
+
   return (
     <div className="flex h-screen bg-slate-100 overflow-hidden font-sans">
       {/* Sidebar */}
@@ -64,11 +78,15 @@ export default function App() {
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Top Navbar */}
+        {/* Dynamic Contextual Top Navbar */}
         <Navbar
+          activeTab={activeTab}
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           onAddNewPOI={handleAddNewPOI}
+          poiCount={pois.length}
+          onExportJSON={handleExportJSON}
+          onPrintReport={handlePrintReport}
         />
 
         {/* Dynamic Page Content */}
@@ -84,6 +102,7 @@ export default function App() {
           {activeTab === 'pois' && (
             <POIManager
               pois={pois}
+              searchFilter={searchTerm}
               onAddNewPOI={handleAddNewPOI}
               onEditPOI={handleEditPOI}
               onDeletePOI={handleDeletePOI}
@@ -91,7 +110,7 @@ export default function App() {
           )}
 
           {activeTab === 'certificates' && (
-            <CertificateAudits pois={pois} />
+            <CertificateAudits pois={pois} searchFilter={searchTerm} />
           )}
 
           {activeTab === 'mosques' && (
@@ -103,7 +122,11 @@ export default function App() {
           )}
 
           {activeTab === 'reports' && (
-            <RegistryExport pois={pois} />
+            <RegistryExport
+              pois={pois}
+              onExportJSON={handleExportJSON}
+              onPrint={handlePrintReport}
+            />
           )}
         </main>
       </div>

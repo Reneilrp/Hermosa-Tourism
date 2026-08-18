@@ -11,46 +11,25 @@ import {
   Plus,
 } from 'lucide-react';
 
-export default function POIManager({ pois, onAddNewPOI, onEditPOI, onDeletePOI }) {
+export default function POIManager({ pois, searchFilter = '', onAddNewPOI, onEditPOI, onDeletePOI }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');
-  const [search, setSearch] = useState('');
 
   const filtered = pois.filter((p) => {
     const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
     const matchTier = selectedTier === 'all' || p.tier === selectedTier;
+    const effectiveSearch = searchFilter.trim().toLowerCase();
     const matchSearch =
-      search.trim() === '' ||
-      p.name.toLowerCase().includes(search.toLowerCase()) ||
-      p.address.toLowerCase().includes(search.toLowerCase()) ||
-      (p.cuisine && p.cuisine.toLowerCase().includes(search.toLowerCase()));
+      effectiveSearch === '' ||
+      p.name.toLowerCase().includes(effectiveSearch) ||
+      p.address.toLowerCase().includes(effectiveSearch) ||
+      (p.cuisine && p.cuisine.toLowerCase().includes(effectiveSearch));
     return matchCat && matchTier && matchSearch;
   });
 
   return (
-    <div className="space-y-5">
-      {/* Header Actions */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div>
-          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <MapPin className="w-5 h-5 text-emerald-600" />
-            Place & Mosque Directory Management
-          </h2>
-          <p className="text-xs text-slate-500">
-            Audit and publish verified Halal venues, masjids, and cultural landmarks across Zamboanga City
-          </p>
-        </div>
-
-        <button
-          onClick={onAddNewPOI}
-          className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
-        >
-          <Plus className="w-4 h-4" />
-          <span>Add New Place / Mosque</span>
-        </button>
-      </div>
-
-      {/* Filter Controls Strip */}
+    <div className="space-y-4">
+      {/* Category Tabs & Halal Tier Filter Controls */}
       <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
         {/* Category Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
@@ -64,7 +43,7 @@ export default function POIManager({ pois, onAddNewPOI, onEditPOI, onDeletePOI }
             <button
               key={cat.id}
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 selectedCategory === cat.id
                   ? 'bg-slate-900 text-white'
                   : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
@@ -75,8 +54,9 @@ export default function POIManager({ pois, onAddNewPOI, onEditPOI, onDeletePOI }
           ))}
         </div>
 
-        {/* Tier Filter & Search */}
-        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+        {/* Tier Filter */}
+        <div className="flex items-center gap-2.5">
+          <span className="text-xs text-slate-500 font-bold">Filter Tier:</span>
           <select
             value={selectedTier}
             onChange={(e) => setSelectedTier(e.target.value)}
@@ -88,17 +68,6 @@ export default function POIManager({ pois, onAddNewPOI, onEditPOI, onDeletePOI }
             <option value="tier3">Tier 3: Halal Options</option>
             <option value="tier4">Tier 4: Vegan/Seafood</option>
           </select>
-
-          <div className="relative flex-1 sm:w-60">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search places..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-3 py-1.5 text-xs font-medium text-slate-800 outline-none"
-            />
-          </div>
         </div>
       </div>
 

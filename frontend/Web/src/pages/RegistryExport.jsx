@@ -1,53 +1,9 @@
 import React from 'react';
 import { FileSpreadsheet, Download, Printer, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 
-export default function RegistryExport({ pois }) {
-  const handleExportJSON = () => {
-    const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(pois, null, 2));
-    const downloadAnchor = document.createElement('a');
-    downloadAnchor.setAttribute('href', dataStr);
-    downloadAnchor.setAttribute('download', 'zamboanga_city_halal_registry_2026.json');
-    document.body.appendChild(downloadAnchor);
-    downloadAnchor.click();
-    downloadAnchor.remove();
-  };
-
-  const handlePrint = () => {
-    window.print();
-  };
-
+export default function RegistryExport({ pois, onExportJSON, onPrint }) {
   return (
-    <div className="space-y-6">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div>
-          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <FileSpreadsheet className="w-5 h-5 text-emerald-600" />
-            Official Zamboanga City Halal Tourism Registry & Reports
-          </h2>
-          <p className="text-xs text-slate-500">
-            Generate and export official Halal-verified listings for the City Tourism Office and National Commission on Muslim Filipinos (NCMF)
-          </p>
-        </div>
-
-        <div className="flex items-center gap-2">
-          <button
-            onClick={handleExportJSON}
-            className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <Download className="w-4 h-4" />
-            <span>Export JSON Registry</span>
-          </button>
-          <button
-            onClick={handlePrint}
-            className="bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold text-xs px-3.5 py-2 rounded-xl transition-all flex items-center gap-1.5 cursor-pointer"
-          >
-            <Printer className="w-4 h-4" />
-            <span>Print Report</span>
-          </button>
-        </div>
-      </div>
-
+    <div className="space-y-4">
       {/* Printable Official Registry Card */}
       <div className="bg-white rounded-2xl p-8 border border-slate-200 shadow-sm space-y-6">
         <div className="border-b border-slate-200 pb-6 flex items-start justify-between">
@@ -66,6 +22,26 @@ export default function RegistryExport({ pois }) {
             <div className="mt-1 inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-full border border-emerald-200">
               <ShieldCheck className="w-3.5 h-3.5" /> NCMF Compliant
             </div>
+          </div>
+        </div>
+
+        {/* Summary Metric Stats for Tourism Office */}
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 bg-slate-50 p-4 rounded-xl border border-slate-100">
+          <div>
+            <div className="text-[11px] font-semibold text-slate-500">Total Registered</div>
+            <div className="text-base font-extrabold text-slate-900">{pois.length} Venues</div>
+          </div>
+          <div>
+            <div className="text-[11px] font-semibold text-slate-500">Mosques & Masjids</div>
+            <div className="text-base font-extrabold text-emerald-700">{pois.filter(p => p.category === 'worship').length} Masjids</div>
+          </div>
+          <div>
+            <div className="text-[11px] font-semibold text-slate-500">Tier 1 Halal Certified</div>
+            <div className="text-base font-extrabold text-amber-700">{pois.filter(p => p.tier === 'tier1').length} Places</div>
+          </div>
+          <div>
+            <div className="text-[11px] font-semibold text-slate-500">Muslim-Owned Dining</div>
+            <div className="text-base font-extrabold text-blue-700">{pois.filter(p => p.category === 'dining').length} Eateries</div>
           </div>
         </div>
 
