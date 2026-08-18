@@ -8,6 +8,8 @@ import {
   CheckCircle2,
   FileCheck2,
   Moon,
+  List,
+  Map as MapIcon,
 } from 'lucide-react';
 
 export default function Navbar({
@@ -16,6 +18,8 @@ export default function Navbar({
   poiCount = 16,
   onExportJSON,
   onPrintReport,
+  poiViewMode = 'list',
+  setPoiViewMode,
 }) {
   return (
     <header className="h-16 bg-white border-b border-slate-200/90 px-6 flex items-center justify-between shrink-0 shadow-xs z-20">
@@ -59,7 +63,7 @@ export default function Navbar({
         </>
       )}
 
-      {/* 2. PLACE & MOSQUE DIRECTORY HEADER */}
+      {/* 2. PLACE & MOSQUE DIRECTORY HEADER (Dual View Switcher at Top Right) */}
       {activeTab === 'pois' && (
         <>
           <div className="flex items-center gap-3">
@@ -69,21 +73,44 @@ export default function Navbar({
                 <span className="bg-slate-100 text-slate-700 text-[11px] font-extrabold px-2 py-0.5 rounded-md">
                   {poiCount} Registered
                 </span>
+                <span className="text-[11px] font-semibold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">
+                  {poiViewMode === 'map' ? '🗺️ GIS Map Mode' : '📋 Table List Mode'}
+                </span>
               </h2>
               <p className="text-[11px] text-slate-500 font-medium">
-                Manage GPS coordinates, categories, and Halal verification tiers
+                {poiViewMode === 'map'
+                  ? 'Spatial GIS overview with interactive category pins across Zamboanga City'
+                  : 'Manage GPS coordinates, categories, and Halal verification tiers'}
               </p>
             </div>
           </div>
 
+          {/* Top Right: Dual View Toggle Switcher */}
           <div className="flex items-center gap-3">
-            <button
-              onClick={() => onAddNewPOI('worship')}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Add New Place / Mosque</span>
-            </button>
+            <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shadow-2xs">
+              <button
+                onClick={() => setPoiViewMode('list')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  poiViewMode === 'list'
+                    ? 'bg-white text-slate-900 shadow-xs border border-slate-200/80'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <List className="w-3.5 h-3.5" />
+                <span>List View</span>
+              </button>
+              <button
+                onClick={() => setPoiViewMode('map')}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer ${
+                  poiViewMode === 'map'
+                    ? 'bg-emerald-600 text-white shadow-xs'
+                    : 'text-slate-500 hover:text-slate-900'
+                }`}
+              >
+                <MapIcon className="w-3.5 h-3.5" />
+                <span>Map View</span>
+              </button>
+            </div>
           </div>
         </>
       )}

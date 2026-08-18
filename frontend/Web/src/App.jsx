@@ -17,6 +17,7 @@ export default function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPOI, setEditingPOI] = useState(null);
   const [modalCategory, setModalCategory] = useState('worship');
+  const [poiViewMode, setPoiViewMode] = useState('list'); // 'list' | 'map'
 
   useEffect(() => {
     async function loadData() {
@@ -94,6 +95,8 @@ export default function App() {
           poiCount={pois.length}
           onExportJSON={handleExportJSON}
           onPrintReport={handlePrintReport}
+          poiViewMode={poiViewMode}
+          setPoiViewMode={setPoiViewMode}
         />
 
         {/* Dynamic Page Content */}
@@ -109,8 +112,8 @@ export default function App() {
           {activeTab === 'pois' && (
             <POIManager
               pois={pois}
-              searchFilter={searchTerm}
-              onAddNewPOI={() => handleAddNewPOI('worship')}
+              viewMode={poiViewMode}
+              onAddNewPOI={handleAddNewPOI}
               onEditPOI={handleEditPOI}
               onDeletePOI={handleDeletePOI}
             />

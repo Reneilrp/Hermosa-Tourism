@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   MapPin,
   Search,
@@ -10,40 +10,64 @@ import {
   Star,
   Plus,
   X,
-  List,
-  Map as MapIcon,
   Moon,
   Utensils,
   ShoppingBag,
   Landmark,
+  Compass,
+  Phone,
+  Clock,
+  Layers,
+  ChevronRight,
 } from 'lucide-react';
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 
 // Create custom category-specific colored markers for Leaflet
-const createCategoryIcon = (category) => {
+const createCategoryIcon = (category, isSelected = false) => {
   const iconColor = category === 'worship' ? '#059669' : category === 'dining' ? '#d97706' : category === 'market' ? '#ea580c' : '#7c3aed';
+  const size = isSelected ? 38 : 32;
+  const emoji = category === 'worship' ? '🕌' : category === 'dining' ? '🍽️' : category === 'market' ? '🛍️' : '🏛️';
+  
   const svgHtml = `
-    <div style="background-color: ${iconColor}; width: 32px; height: 32px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: 2.5px solid white; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.3);">
-      <div style="transform: rotate(45deg); color: white; font-size: 14px; font-weight: bold;">
-        ${category === 'worship' ? '🕌' : category === 'dining' ? '🍽️' : category === 'market' ? '🛍️' : '🏛️'}
+    <div style="background-color: ${iconColor}; width: ${size}px; height: ${size}px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: ${isSelected ? '3.5px solid #fbbf24' : '2.5px solid white'}; box-shadow: 0 4px 10px rgba(0,0,0,0.35); transition: all 0.2s ease;">
+      <div style="transform: rotate(45deg); color: white; font-size: ${isSelected ? '16px' : '13px'}; font-weight: bold;">
+        ${emoji}
       </div>
     </div>
   `;
   return L.divIcon({
     html: svgHtml,
     className: 'custom-leaflet-marker',
-    iconSize: [32, 32],
-    iconAnchor: [16, 32],
-    popupAnchor: [0, -32],
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size],
+    popupAnchor: [0, -size],
   });
 };
 
-export default function POIManager({ pois, onAddNewPOI, onEditPOI, onDeletePOI }) {
+function MapCameraController({ center, zoom }) {
+  const map = useMap();
+  React.useEffect(() => {
+    if (center) {
+      map.flyTo(center, zoom, { duration: 1.2 });
+    }
+  }, [center, zoom, map]);
+  return null;
+}
+
+export default function POIManager({
+  pois,
+  viewMode = 'list',
+  onAddNewPOI,
+  onEditPOI,
+  onDeletePOI,
+}) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');
   const [search, setSearch] = useState('');
-  const [viewMode, setViewMode] = useState('list'); // 'list' | 'map'
+  const [selectedPOI, setSelectedPOI] = useState(null);
+  const [mapCenter, setMapCenter] = useState([6.9350, 122.1000]);
+  const [mapZoom, setMapZoom] = useState(12);
 
   const filtered = pois.filter((p) => {
     const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
@@ -57,262 +81,386 @@ export default function POIManager({ pois, onAddNewPOI, onEditPOI, onDeletePOI }
     return matchCat && matchTier && matchSearch;
   });
 
+  const focusPOI = (poi) => {
+    setSelectedPOI(poi);
+    setMapCenter([poi.latitude, poi.longitude]);
+    setMapZoom(15);
+  };
+
+  const focusPreset = (lat, lng, zoom = 14) => {
+    setMapCenter([lat, lng]);
+    setMapZoom(zoom);
+  };
+
   return (
     <div className="space-y-4">
-      {/* Category Tabs, Halal Tier Filter, Search Query & View Switcher */}
-      <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-        {/* Category Tabs */}
-        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-          {[
-            { id: 'all', label: 'All Categories' },
-            { id: 'worship', label: '🕌 Mosques' },
-            { id: 'dining', label: '🍽️ Halal Dining' },
-            { id: 'market', label: '🛍️ Barter Markets' },
-            { id: 'cultural', label: '🏛️ Cultural' },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                selectedCategory === cat.id
-                  ? 'bg-slate-900 text-white'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Right Controls: Tier Filter + Search Input + List/Map View Toggle */}
-        <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
-          {/* Halal Tier Selector */}
-          <select
-            value={selectedTier}
-            onChange={(e) => setSelectedTier(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none cursor-pointer"
-          >
-            <option value="all">All Halal Tiers</option>
-            <option value="tier1">Tier 1: Certified / Mosque</option>
-            <option value="tier2">Tier 2: Muslim-Owned</option>
-            <option value="tier3">Tier 3: Halal Options</option>
-            <option value="tier4">Tier 4: Vegan/Seafood</option>
-          </select>
-
-          {/* Search Query Input */}
-          <div className="relative flex-1 sm:w-56">
-            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search places in Zamboanga..."
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-            />
-            {search.length > 0 && (
-              <button
-                onClick={() => setSearch('')}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
-              >
-                <X className="w-3.5 h-3.5" />
-              </button>
-            )}
-          </div>
-
-          {/* View Mode Toggle: List vs Map (Same as Mobile) */}
-          <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 shrink-0">
-            <button
-              onClick={() => setViewMode('list')}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'list'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <List className="w-3.5 h-3.5" />
-              <span>List</span>
-            </button>
-            <button
-              onClick={() => setViewMode('map')}
-              className={`flex items-center gap-1.5 px-3 py-1 rounded-lg text-xs font-bold transition-all cursor-pointer ${
-                viewMode === 'map'
-                  ? 'bg-white text-slate-900 shadow-xs'
-                  : 'text-slate-500 hover:text-slate-800'
-              }`}
-            >
-              <MapIcon className="w-3.5 h-3.5" />
-              <span>Map</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* 1. LIST VIEW (Default Table) */}
+      {/* 1. LIST VIEW (Default Table View) */}
       {viewMode === 'list' && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
-              <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[10px] font-extrabold tracking-wider">
-                <tr>
-                  <th className="px-5 py-3.5">Establishment / Mosque</th>
-                  <th className="px-4 py-3.5">Category</th>
-                  <th className="px-4 py-3.5">Halal Tier</th>
-                  <th className="px-4 py-3.5">Coordinates (GPS)</th>
-                  <th className="px-4 py-3.5">Rating & Reviews</th>
-                  <th className="px-4 py-3.5">Cert Body</th>
-                  <th className="px-5 py-3.5 text-right">Actions</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
-                {filtered.map((poi) => (
-                  <tr key={poi.id} className="hover:bg-slate-50/80 transition-colors">
-                    <td className="px-5 py-3.5">
-                      <div className="flex items-center gap-3">
-                        <img
-                          src={poi.image}
-                          alt={poi.name}
-                          className="w-10 h-10 rounded-xl object-cover bg-slate-100 shrink-0"
-                        />
-                        <div>
-                          <div className="font-extrabold text-slate-900 text-xs">{poi.name}</div>
-                          <div className="text-[11px] text-slate-500 truncate max-w-xs">{poi.address}</div>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span className="capitalize font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-lg text-[10px]">
-                        {poi.category}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <span
-                        className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${
-                          poi.tier === 'tier1'
-                            ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                            : poi.tier === 'tier2'
-                            ? 'bg-blue-100 text-blue-800 border border-blue-200'
-                            : 'bg-amber-100 text-amber-800 border border-amber-200'
-                        }`}
-                      >
-                        {poi.tier === 'tier1' ? 'Tier 1: Certified' : poi.tier === 'tier2' ? 'Tier 2: Muslim-Owned' : 'Tier 3: Options'}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3.5 font-mono text-[11px] text-slate-600">
-                      {poi.latitude?.toFixed(4)}, {poi.longitude?.toFixed(4)}
-                    </td>
-                    <td className="px-4 py-3.5">
-                      <div className="flex items-center gap-1">
-                        <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
-                        <span className="font-bold text-slate-900">{poi.rating}</span>
-                        <span className="text-slate-400 text-[10px]">({poi.reviewCount})</span>
-                      </div>
-                    </td>
-                    <td className="px-4 py-3.5 text-slate-600 text-[11px]">
-                      {poi.certBody || 'NCMF / Council'}
-                    </td>
-                    <td className="px-5 py-3.5 text-right">
-                      <div className="flex items-center justify-end gap-1.5">
-                        <button
-                          onClick={() => onEditPOI(poi)}
-                          className="p-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all cursor-pointer"
-                          title="Edit Place"
-                        >
-                          <Edit2 className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => onDeletePOI(poi.id)}
-                          className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer"
-                          title="Delete Place"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-                    </td>
+        <div className="space-y-4">
+          {/* Filter & Action Toolbar */}
+          <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+            {/* Category Tabs */}
+            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
+              {[
+                { id: 'all', label: 'All Categories' },
+                { id: 'worship', label: '🕌 Mosques' },
+                { id: 'dining', label: '🍽️ Halal Dining' },
+                { id: 'market', label: '🛍️ Barter Markets' },
+                { id: 'cultural', label: '🏛️ Cultural' },
+              ].map((cat) => (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                    selectedCategory === cat.id
+                      ? 'bg-slate-900 text-white'
+                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                  }`}
+                >
+                  {cat.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Right Controls: Tier Selector + Search Input + Add Place Button */}
+            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+              <select
+                value={selectedTier}
+                onChange={(e) => setSelectedTier(e.target.value)}
+                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none cursor-pointer"
+              >
+                <option value="all">All Halal Tiers</option>
+                <option value="tier1">Tier 1: Certified / Mosque</option>
+                <option value="tier2">Tier 2: Muslim-Owned</option>
+                <option value="tier3">Tier 3: Halal Options</option>
+                <option value="tier4">Tier 4: Vegan/Seafood</option>
+              </select>
+
+              {/* Search Query Input */}
+              <div className="relative flex-1 sm:w-60">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Search places in Zamboanga..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                />
+                {search.length > 0 && (
+                  <button
+                    onClick={() => setSearch('')}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </button>
+                )}
+              </div>
+
+              <button
+                onClick={() => onAddNewPOI('worship')}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>+ Add New Place / Mosque</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Places Table */}
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs">
+                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 uppercase text-[10px] font-extrabold tracking-wider">
+                  <tr>
+                    <th className="px-5 py-3.5">Establishment / Mosque</th>
+                    <th className="px-4 py-3.5">Category</th>
+                    <th className="px-4 py-3.5">Halal Tier</th>
+                    <th className="px-4 py-3.5">Coordinates (GPS)</th>
+                    <th className="px-4 py-3.5">Rating & Reviews</th>
+                    <th className="px-4 py-3.5">Cert Body</th>
+                    <th className="px-5 py-3.5 text-right">Actions</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
+                  {filtered.map((poi) => (
+                    <tr key={poi.id} className="hover:bg-slate-50/80 transition-colors">
+                      <td className="px-5 py-3.5">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={poi.image}
+                            alt={poi.name}
+                            className="w-10 h-10 rounded-xl object-cover bg-slate-100 shrink-0"
+                          />
+                          <div>
+                            <div className="font-extrabold text-slate-900 text-xs">{poi.name}</div>
+                            <div className="text-[11px] text-slate-500 truncate max-w-xs">{poi.address}</div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span className="capitalize font-bold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-lg text-[10px]">
+                          {poi.category}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <span
+                          className={`text-[10px] font-bold px-2 py-0.5 rounded-lg ${
+                            poi.tier === 'tier1'
+                              ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
+                              : poi.tier === 'tier2'
+                              ? 'bg-blue-100 text-blue-800 border border-blue-200'
+                              : 'bg-amber-100 text-amber-800 border border-amber-200'
+                          }`}
+                        >
+                          {poi.tier === 'tier1' ? 'Tier 1: Certified' : poi.tier === 'tier2' ? 'Tier 2: Muslim-Owned' : 'Tier 3: Options'}
+                        </span>
+                      </td>
+                      <td className="px-4 py-3.5 font-mono text-[11px] text-slate-600">
+                        {poi.latitude?.toFixed(4)}, {poi.longitude?.toFixed(4)}
+                      </td>
+                      <td className="px-4 py-3.5">
+                        <div className="flex items-center gap-1">
+                          <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                          <span className="font-bold text-slate-900">{poi.rating}</span>
+                          <span className="text-slate-400 text-[10px]">({poi.reviewCount})</span>
+                        </div>
+                      </td>
+                      <td className="px-4 py-3.5 text-slate-600 text-[11px]">
+                        {poi.certBody || 'NCMF / Council'}
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
+                        <div className="flex items-center justify-end gap-1.5">
+                          <button
+                            onClick={() => onEditPOI(poi)}
+                            className="p-1.5 rounded-lg text-slate-600 hover:text-emerald-700 hover:bg-emerald-50 transition-all cursor-pointer"
+                            title="Edit Place"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            onClick={() => onDeletePOI(poi.id)}
+                            className="p-1.5 rounded-lg text-slate-400 hover:text-red-600 hover:bg-red-50 transition-all cursor-pointer"
+                            title="Delete Place"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       )}
 
-      {/* 2. MAP VIEW (Full-Canvas Zamboanga Interactive GIS Map) */}
+      {/* 2. MAP VIEW (Full-Canvas Interactive GIS Map like Evac_Route Web) */}
       {viewMode === 'map' && (
-        <div className="bg-white rounded-2xl border border-slate-200 shadow-xs overflow-hidden p-4 space-y-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="text-xs font-extrabold text-slate-900">
-                Interactive GIS Pinpoint Map ({filtered.length} Landmarks Displayed)
-              </span>
-              <span className="text-[11px] text-slate-500 font-medium">
-                • Click any marker to view details or edit
-              </span>
+        <div className="relative h-[calc(100vh-10.5rem)] rounded-3xl overflow-hidden border border-slate-200 shadow-sm flex flex-col">
+          {/* Top Floating Map Controls: Filters + Search + Add Button */}
+          <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
+            {/* Floating Left: Category Pills & Search */}
+            <div className="flex flex-wrap items-center gap-2 pointer-events-auto bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200/80">
+              <div className="relative w-48 sm:w-56">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                <input
+                  type="text"
+                  placeholder="Filter map pins..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-6 py-1.5 text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                />
+                {search.length > 0 && (
+                  <button onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                    <X className="w-3 h-3" />
+                  </button>
+                )}
+              </div>
+
+              <div className="h-4 w-px bg-slate-200 mx-0.5" />
+
+              <div className="flex items-center gap-1 overflow-x-auto">
+                {[
+                  { id: 'all', label: `All (${pois.length})` },
+                  { id: 'worship', label: '🕌 Mosques' },
+                  { id: 'dining', label: '🍽️ Dining' },
+                  { id: 'market', label: '🛍️ Markets' },
+                  { id: 'cultural', label: '🏛️ Cultural' },
+                ].map((c) => (
+                  <button
+                    key={c.id}
+                    onClick={() => setSelectedCategory(c.id)}
+                    className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
+                      selectedCategory === c.id
+                        ? 'bg-slate-900 text-white shadow-xs'
+                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+                    }`}
+                  >
+                    {c.label}
+                  </button>
+                ))}
+              </div>
             </div>
-            <div className="flex items-center gap-3 text-[11px] font-bold">
-              <span className="flex items-center gap-1 text-emerald-700">🟢 Mosques</span>
-              <span className="flex items-center gap-1 text-amber-700">🟡 Halal Dining</span>
-              <span className="flex items-center gap-1 text-orange-700">🟠 Markets</span>
-              <span className="flex items-center gap-1 text-purple-700">🟣 Cultural</span>
+
+            {/* Floating Right: Quick Presets & Add Place Action */}
+            <div className="flex items-center gap-2 pointer-events-auto">
+              <div className="hidden lg:flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200/80 text-[10px] font-bold text-slate-600">
+                <span className="px-1.5 text-slate-400">Focus:</span>
+                <button
+                  onClick={() => focusPreset(6.9580, 122.1400, 15)}
+                  className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
+                >
+                  Mercedes Grand Mosque
+                </button>
+                <button
+                  onClick={() => focusPreset(6.9142, 122.0590, 15)}
+                  className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
+                >
+                  WMSU Campus
+                </button>
+                <button
+                  onClick={() => focusPreset(6.9555, 122.1795, 15)}
+                  className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
+                >
+                  Taluksangay
+                </button>
+              </div>
+
+              <button
+                onClick={() => onAddNewPOI('worship')}
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-2xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+              >
+                <Plus className="w-3.5 h-3.5" />
+                <span>Add Place / Mosque</span>
+              </button>
             </div>
           </div>
 
-          <div className="h-[520px] rounded-2xl overflow-hidden border border-slate-200 relative">
+          {/* Leaflet GIS Map Container */}
+          <div className="w-full h-full relative z-10">
             <MapContainer
-              center={[6.9350, 122.1000]}
-              zoom={12}
+              center={mapCenter}
+              zoom={mapZoom}
               scrollWheelZoom={true}
-              className="w-full h-full z-10"
+              className="w-full h-full"
             >
               <TileLayer
                 attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
               />
+              <MapCameraController center={mapCenter} zoom={mapZoom} />
 
               {filtered.map((poi) => (
                 <Marker
                   key={poi.id}
                   position={[poi.latitude, poi.longitude]}
-                  icon={createCategoryIcon(poi.category)}
+                  icon={createCategoryIcon(poi.category, selectedPOI?.id === poi.id)}
+                  eventHandlers={{
+                    click: () => {
+                      setSelectedPOI(poi);
+                    },
+                  }}
                 >
-                  <Popup className="custom-popup">
-                    <div className="p-1 space-y-2 max-w-xs text-slate-900">
-                      <img
-                        src={poi.image}
-                        alt={poi.name}
-                        className="w-full h-24 rounded-lg object-cover bg-slate-100"
-                      />
-                      <div>
-                        <div className="font-extrabold text-xs text-slate-950">{poi.name}</div>
-                        <div className="text-[11px] text-slate-500 truncate mt-0.5">{poi.address}</div>
-                        <div className="flex items-center gap-2 mt-1.5">
-                          <span className="text-[10px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                            {poi.tier === 'tier1' ? 'Tier 1: Certified' : 'Tier 2: Muslim-Owned'}
-                          </span>
-                          <span className="text-[10px] text-amber-600 font-bold flex items-center gap-0.5">
-                            <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> {poi.rating}
-                          </span>
-                        </div>
-                      </div>
-
-                      <div className="pt-2 border-t border-slate-100 flex items-center justify-between gap-2">
-                        <button
-                          onClick={() => onEditPOI(poi)}
-                          className="flex-1 py-1 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-[11px] text-center transition-all cursor-pointer"
-                        >
-                          Edit Place
-                        </button>
-                        <button
-                          onClick={() => onDeletePOI(poi.id)}
-                          className="py-1 px-2.5 rounded-lg bg-red-50 hover:bg-red-100 text-red-700 font-bold text-[11px] transition-all cursor-pointer"
-                        >
-                          Delete
-                        </button>
-                      </div>
-                    </div>
+                  <Popup>
+                    <div className="font-bold text-xs text-slate-900">{poi.name}</div>
+                    <div className="text-[11px] text-slate-500">{poi.address}</div>
                   </Popup>
                 </Marker>
               ))}
             </MapContainer>
+          </div>
+
+          {/* Left Slide-Over / Floating Selected Landmark Detail Card */}
+          {selectedPOI && (
+            <div className="absolute top-20 left-4 z-30 w-80 bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden animate-in slide-in-from-left duration-200">
+              <div className="relative">
+                <img
+                  src={selectedPOI.image}
+                  alt={selectedPOI.name}
+                  className="w-full h-32 object-cover bg-slate-100"
+                />
+                <button
+                  onClick={() => setSelectedPOI(null)}
+                  className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-all cursor-pointer"
+                >
+                  <X className="w-3.5 h-3.5" />
+                </button>
+                <div className="absolute bottom-2.5 left-2.5">
+                  <span
+                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm ${
+                      selectedPOI.tier === 'tier1'
+                        ? 'bg-emerald-600 text-white'
+                        : selectedPOI.tier === 'tier2'
+                        ? 'bg-blue-600 text-white'
+                        : 'bg-amber-600 text-white'
+                    }`}
+                  >
+                    {selectedPOI.tier === 'tier1' ? 'Tier 1: Certified' : 'Tier 2: Muslim-Owned'}
+                  </span>
+                </div>
+              </div>
+
+              <div className="p-4 space-y-3">
+                <div>
+                  <h4 className="font-extrabold text-sm text-slate-900 leading-snug">{selectedPOI.name}</h4>
+                  <p className="text-xs text-slate-500 flex items-start gap-1 mt-1">
+                    <MapPin className="w-3.5 h-3.5 text-emerald-600 shrink-0 mt-0.5" />
+                    <span>{selectedPOI.address}</span>
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1 text-xs">
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-slate-500 font-semibold">Coordinates:</span>
+                    <span className="font-mono font-bold text-slate-700">{selectedPOI.latitude?.toFixed(4)}, {selectedPOI.longitude?.toFixed(4)}</span>
+                  </div>
+                  <div className="flex items-center justify-between text-[11px]">
+                    <span className="text-slate-500 font-semibold">Rating:</span>
+                    <span className="font-bold text-amber-600 flex items-center gap-0.5">
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400" /> {selectedPOI.rating} ({selectedPOI.reviewCount || 0})
+                    </span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 pt-1">
+                  <button
+                    onClick={() => onEditPOI(selectedPOI)}
+                    className="flex-1 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs text-center transition-all cursor-pointer flex items-center justify-center gap-1.5 shadow-sm"
+                  >
+                    <Edit2 className="w-3.5 h-3.5" />
+                    <span>Edit Place</span>
+                  </button>
+                  <button
+                    onClick={() => {
+                      onDeletePOI(selectedPOI.id);
+                      setSelectedPOI(null);
+                    }}
+                    className="p-2 rounded-xl bg-red-50 hover:bg-red-100 text-red-600 transition-all cursor-pointer"
+                    title="Delete Place"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Bottom Right Floating Minimal Legend */}
+          <div className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center gap-3 text-[11px] font-bold text-slate-700">
+            <span className="text-[10px] uppercase tracking-wider text-slate-400 font-extrabold">Legend:</span>
+            <span className="flex items-center gap-1 text-emerald-800">
+              <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block" /> Mosques
+            </span>
+            <span className="flex items-center gap-1 text-amber-800">
+              <span className="w-2.5 h-2.5 rounded-full bg-amber-600 inline-block" /> Halal Dining
+            </span>
+            <span className="flex items-center gap-1 text-orange-800">
+              <span className="w-2.5 h-2.5 rounded-full bg-orange-600 inline-block" /> Markets
+            </span>
+            <span className="flex items-center gap-1 text-purple-800">
+              <span className="w-2.5 h-2.5 rounded-full bg-purple-600 inline-block" /> Cultural
+            </span>
           </div>
         </div>
       )}
