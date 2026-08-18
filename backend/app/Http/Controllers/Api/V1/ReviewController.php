@@ -18,7 +18,7 @@ class ReviewController extends Controller
     {
         $poi = Poi::where('custom_id', $poiId)->orWhere('id', $poiId)->first();
 
-        if (!$poi) {
+        if (! $poi) {
             return response()->json([
                 'success' => false,
                 'message' => 'Place not found',

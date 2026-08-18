@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 class PrayerController extends Controller
 {
     const KAABA_LAT = 21.422487;
+
     const KAABA_LNG = 39.826206;
 
     /**
@@ -59,7 +60,7 @@ class PrayerController extends Controller
             }
         }
 
-        if (!$nextPrayer) {
+        if (! $nextPrayer) {
             $nextPrayer = [
                 'name' => 'Fajr',
                 'time' => $timings['fajr'],

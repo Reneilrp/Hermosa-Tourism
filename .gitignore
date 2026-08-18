@@ -1,0 +1,21 @@
+# Dependencies
+node_modules/
+vendor/
+
+# Environment variables
+.env
+.env.backup
+.env.production
+
+# Build Outputs
+dist/
+build/
+.expo/
+.vite/
+
+# Caches & Temp
+.phpunit.cache/
+.php-cs-fixer.cache
+*.log
+.DS_Store
+Thumbs.db

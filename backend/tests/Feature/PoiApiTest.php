@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Database\Seeders\ZamboangaPoiSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -12,7 +13,7 @@ class PoiApiTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->seed(\Database\Seeders\ZamboangaPoiSeeder::class);
+        $this->seed(ZamboangaPoiSeeder::class);
     }
 
     public function test_api_health_endpoint_returns_ok(): void

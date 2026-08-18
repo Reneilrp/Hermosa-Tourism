@@ -38,13 +38,13 @@ class PoiController extends Controller
         }
 
         // Search query across name, cuisine, address, and description
-        if (!empty($search)) {
+        if (! empty($search)) {
             $query->where(function ($q) use ($search) {
                 $term = "%{$search}%";
                 $q->where('name', 'like', $term)
-                  ->orWhere('cuisine', 'like', $term)
-                  ->orWhere('address', 'like', $term)
-                  ->orWhere('description', 'like', $term);
+                    ->orWhere('cuisine', 'like', $term)
+                    ->orWhere('address', 'like', $term)
+                    ->orWhere('description', 'like', $term);
             });
         }
 
@@ -58,6 +58,7 @@ class PoiController extends Controller
                 $poi->latitude,
                 $poi->longitude
             );
+
             return $poi;
         });
 
@@ -84,7 +85,7 @@ class PoiController extends Controller
             ->orWhere('id', $id)
             ->first();
 
-        if (!$poi) {
+        if (! $poi) {
             return response()->json([
                 'success' => false,
                 'message' => 'Place not found in Zamboanga database',
