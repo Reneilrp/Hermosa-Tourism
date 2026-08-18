@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { MessageSquare, Star, CheckCircle, XCircle, ShieldCheck, Flag } from 'lucide-react';
+import { MessageSquare, Star, CheckCircle, XCircle, ShieldCheck, Flag, Search, X } from 'lucide-react';
 
-export default function ReviewModeration({ pois, searchFilter = '' }) {
+export default function ReviewModeration({ pois }) {
   const [reviews, setReviews] = useState([
     {
       id: 'rev-1',
@@ -39,6 +39,7 @@ export default function ReviewModeration({ pois, searchFilter = '' }) {
   ]);
 
   const [filterRating, setFilterRating] = useState('all');
+  const [search, setSearch] = useState('');
 
   const handleApprove = (id) => {
     setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'approved' } : r)));
@@ -50,7 +51,7 @@ export default function ReviewModeration({ pois, searchFilter = '' }) {
 
   const filtered = reviews.filter((r) => {
     const matchRating = filterRating === 'all' || r.rating === Number(filterRating);
-    const query = searchFilter.trim().toLowerCase();
+    const query = search.trim().toLowerCase();
     const matchSearch =
       query === '' ||
       r.placeName.toLowerCase().includes(query) ||
@@ -61,9 +62,10 @@ export default function ReviewModeration({ pois, searchFilter = '' }) {
 
   return (
     <div className="space-y-4">
-      {/* Moderation Filter Toolbar */}
+      {/* Moderation Rating Filters & Search Query Strip */}
       <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5">
+        {/* Rating Filter Buttons */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
           <span className="text-xs font-bold text-slate-500 mr-1">Filter Reviews:</span>
           {[
             { id: 'all', label: `All Reviews (${filtered.length})` },
@@ -83,9 +85,26 @@ export default function ReviewModeration({ pois, searchFilter = '' }) {
           ))}
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>Verified Pilgrim Checkmarks Active</span>
+        {/* Search Query placed directly beside filter buttons */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search reviewer, venue, feedback..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+            />
+            {search.length > 0 && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

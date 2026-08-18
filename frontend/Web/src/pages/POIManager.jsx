@@ -9,16 +9,18 @@ import {
   ShieldCheck,
   Star,
   Plus,
+  X,
 } from 'lucide-react';
 
-export default function POIManager({ pois, searchFilter = '', onAddNewPOI, onEditPOI, onDeletePOI }) {
+export default function POIManager({ pois, onAddNewPOI, onEditPOI, onDeletePOI }) {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedTier, setSelectedTier] = useState('all');
+  const [search, setSearch] = useState('');
 
   const filtered = pois.filter((p) => {
     const matchCat = selectedCategory === 'all' || p.category === selectedCategory;
     const matchTier = selectedTier === 'all' || p.tier === selectedTier;
-    const effectiveSearch = searchFilter.trim().toLowerCase();
+    const effectiveSearch = search.trim().toLowerCase();
     const matchSearch =
       effectiveSearch === '' ||
       p.name.toLowerCase().includes(effectiveSearch) ||
@@ -29,8 +31,8 @@ export default function POIManager({ pois, searchFilter = '', onAddNewPOI, onEdi
 
   return (
     <div className="space-y-4">
-      {/* Category Tabs & Halal Tier Filter Controls */}
-      <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+      {/* Category Tabs, Halal Tier Filter, and Search Query Strip */}
+      <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
         {/* Category Tabs */}
         <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
           {[
@@ -54,13 +56,12 @@ export default function POIManager({ pois, searchFilter = '', onAddNewPOI, onEdi
           ))}
         </div>
 
-        {/* Tier Filter */}
-        <div className="flex items-center gap-2.5">
-          <span className="text-xs text-slate-500 font-bold">Filter Tier:</span>
+        {/* Search Query placed directly beside Tier Filter */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
           <select
             value={selectedTier}
             onChange={(e) => setSelectedTier(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none"
+            className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none cursor-pointer"
           >
             <option value="all">All Halal Tiers</option>
             <option value="tier1">Tier 1: Certified / Mosque</option>
@@ -68,6 +69,26 @@ export default function POIManager({ pois, searchFilter = '', onAddNewPOI, onEdi
             <option value="tier3">Tier 3: Halal Options</option>
             <option value="tier4">Tier 4: Vegan/Seafood</option>
           </select>
+
+          {/* Search Query Input */}
+          <div className="relative flex-1 sm:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search places in Zamboanga..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+            />
+            {search.length > 0 && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Moon, Droplets, Users, Snowflake, Sparkles, Building, CheckCircle2 } from 'lucide-react';
+import { Moon, Droplets, Users, Snowflake, Sparkles, Building, CheckCircle2, Search, X } from 'lucide-react';
 
-export default function MosqueFacilities({ pois, searchFilter = '' }) {
+export default function MosqueFacilities({ pois }) {
   const mosques = pois.filter((p) => p.category === 'worship');
   const [filterAmenity, setFilterAmenity] = useState('all');
+  const [search, setSearch] = useState('');
 
   const filteredMosques = mosques.filter((m) => {
-    const query = searchFilter.trim().toLowerCase();
+    const query = search.trim().toLowerCase();
     const matchSearch =
       query === '' ||
       m.name.toLowerCase().includes(query) ||
@@ -17,10 +18,11 @@ export default function MosqueFacilities({ pois, searchFilter = '' }) {
 
   return (
     <div className="space-y-4">
-      {/* Amenities Filter Toolbar */}
+      {/* Facility Highlights Filter & Search Query Strip */}
       <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5">
-          <span className="text-xs font-bold text-slate-500 mr-1">Facility Highlights:</span>
+        {/* Facility Highlights Filter Pills */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
+          <span className="text-xs font-bold text-slate-500 mr-1">Highlights:</span>
           {[
             { id: 'all', label: `All Masjids (${filteredMosques.length})` },
             { id: 'wudu', label: '💧 Running Wudu' },
@@ -41,9 +43,26 @@ export default function MosqueFacilities({ pois, searchFilter = '' }) {
           ))}
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>All 8 Masjids Inspected in Zamboanga City</span>
+        {/* Search Query placed directly beside filter pills */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search masjids or barangay..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+            />
+            {search.length > 0 && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

@@ -1,33 +1,22 @@
 import React from 'react';
 import {
   Bell,
-  Search,
   Plus,
   Download,
   Printer,
-  ShieldCheck,
   Calendar,
-  Sparkles,
   CheckCircle2,
-  Filter,
   FileCheck2,
   Moon,
-  MapPin,
-  RefreshCw,
-  X,
 } from 'lucide-react';
 
 export default function Navbar({
   activeTab,
-  searchTerm,
-  setSearchTerm,
   onAddNewPOI,
   poiCount = 13,
   onExportJSON,
   onPrintReport,
 }) {
-  const clearSearch = () => setSearchTerm('');
-
   return (
     <header className="h-16 bg-white border-b border-slate-200/90 px-6 flex items-center justify-between shrink-0 shadow-xs z-20">
       {/* 1. DASHBOARD OVERVIEW HEADER */}
@@ -70,7 +59,7 @@ export default function Navbar({
         </>
       )}
 
-      {/* 2. PLACE & MOSQUE DIRECTORY HEADER (Includes Search Query) */}
+      {/* 2. PLACE & MOSQUE DIRECTORY HEADER */}
       {activeTab === 'pois' && (
         <>
           <div className="flex items-center gap-3">
@@ -88,26 +77,9 @@ export default function Navbar({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Search Query */}
-            <div className="relative w-64">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search places in Zamboanga..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-              />
-              {searchTerm.length > 0 && (
-                <button onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
             <button
               onClick={onAddNewPOI}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
             >
               <Plus className="w-4 h-4" />
               <span>Add New Place / Mosque</span>
@@ -116,7 +88,7 @@ export default function Navbar({
         </>
       )}
 
-      {/* 3. HALAL CERTIFICATE AUDITS HEADER (Includes Search Query) */}
+      {/* 3. HALAL CERTIFICATE AUDITS HEADER */}
       {activeTab === 'certificates' && (
         <>
           <div className="flex items-center gap-3">
@@ -134,26 +106,9 @@ export default function Navbar({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Search Query */}
-            <div className="relative w-64">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search cert ID, body, or venue..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-              />
-              {searchTerm.length > 0 && (
-                <button onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
             <button
               onClick={() => alert('Certificate audit registration')}
-              className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              className="bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
             >
               <FileCheck2 className="w-4 h-4 text-emerald-400" />
               <span>Audit New Cert</span>
@@ -162,7 +117,7 @@ export default function Navbar({
         </>
       )}
 
-      {/* 4. MOSQUE FACILITIES HEADER (Includes Search Query) */}
+      {/* 4. MOSQUE FACILITIES HEADER */}
       {activeTab === 'mosques' && (
         <>
           <div className="flex items-center gap-3">
@@ -170,7 +125,7 @@ export default function Navbar({
               <h2 className="text-sm font-extrabold text-slate-900 tracking-tight flex items-center gap-2">
                 <span>Mosque Facilities & Ablution Audit</span>
                 <span className="bg-emerald-50 text-emerald-700 text-[10px] font-extrabold px-2 py-0.5 rounded-md border border-emerald-200">
-                  8 Masjids
+                  8 Masjids Covered
                 </span>
               </h2>
               <p className="text-[11px] text-slate-500">
@@ -180,35 +135,23 @@ export default function Navbar({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Search Query for Mosques */}
-            <div className="relative w-64">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search masjids or barangay..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-              />
-              {searchTerm.length > 0 && (
-                <button onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
+            <div className="hidden sm:flex items-center gap-1.5 bg-slate-50 border border-slate-200 px-3 py-1.5 rounded-xl text-xs font-semibold text-emerald-800">
+              <Moon className="w-3.5 h-3.5 text-emerald-600" />
+              <span>Sadik Grand Mosque • WMSU • Taluksangay</span>
             </div>
 
             <button
               onClick={onAddNewPOI}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
             >
-              <Plus className="w-3.5 h-3.5" />
+              <Plus className="w-4 h-4" />
               <span>Register Masjid</span>
             </button>
           </div>
         </>
       )}
 
-      {/* 5. REVIEW MODERATION HEADER (Includes Search Query) */}
+      {/* 5. REVIEW MODERATION HEADER */}
       {activeTab === 'reviews' && (
         <>
           <div className="flex items-center gap-3">
@@ -226,35 +169,18 @@ export default function Navbar({
           </div>
 
           <div className="flex items-center gap-3">
-            {/* Search Query for Reviews */}
-            <div className="relative w-64">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Search reviewer, venue, feedback..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-              />
-              {searchTerm.length > 0 && (
-                <button onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
             <button
               onClick={() => alert('All verified visitor reviews marked as active.')}
-              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
             >
               <CheckCircle2 className="w-4 h-4" />
-              <span>Approve All</span>
+              <span>Approve All Verified</span>
             </button>
           </div>
         </>
       )}
 
-      {/* 6. REGISTRY EXPORT & REPORTS HEADER (Includes Search Query) */}
+      {/* 6. REGISTRY EXPORT & REPORTS HEADER */}
       {activeTab === 'reports' && (
         <>
           <div className="flex items-center gap-3">
@@ -272,23 +198,6 @@ export default function Navbar({
           </div>
 
           <div className="flex items-center gap-2">
-            {/* Search Query for Registry table preview */}
-            <div className="relative w-56">
-              <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-              <input
-                type="text"
-                placeholder="Filter table rows..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
-              />
-              {searchTerm.length > 0 && (
-                <button onClick={clearSearch} className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
-                  <X className="w-3.5 h-3.5" />
-                </button>
-              )}
-            </div>
-
             <button
               onClick={onExportJSON}
               className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"

@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import {
   FileCheck2,
   ShieldCheck,
-  AlertTriangle,
-  Clock,
+  Search,
   CheckCircle,
-  XCircle,
-  FileText,
   Calendar,
+  X,
 } from 'lucide-react';
 
-export default function CertificateAudits({ pois, searchFilter = '', onUpdateCertStatus }) {
+export default function CertificateAudits({ pois, onUpdateCertStatus }) {
   const [filterStatus, setFilterStatus] = useState('all');
+  const [search, setSearch] = useState('');
 
   const certificates = pois.map((p) => ({
     id: p.id,
@@ -27,7 +26,7 @@ export default function CertificateAudits({ pois, searchFilter = '', onUpdateCer
 
   const filteredCerts = certificates.filter((c) => {
     const matchStatus = filterStatus === 'all' || c.status === filterStatus;
-    const query = searchFilter.trim().toLowerCase();
+    const query = search.trim().toLowerCase();
     const matchSearch =
       query === '' ||
       c.poiName.toLowerCase().includes(query) ||
@@ -39,9 +38,10 @@ export default function CertificateAudits({ pois, searchFilter = '', onUpdateCer
 
   return (
     <div className="space-y-4">
-      {/* Filter Toolbar */}
+      {/* Status Filter Buttons & Search Query Strip */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
-        <div className="flex items-center gap-1.5">
+        {/* Status Filter Buttons */}
+        <div className="flex items-center gap-1.5 overflow-x-auto">
           <span className="text-xs font-bold text-slate-500 mr-1">Filter Status:</span>
           {[
             { id: 'all', label: `All Certs (${certificates.length})` },
@@ -62,9 +62,31 @@ export default function CertificateAudits({ pois, searchFilter = '', onUpdateCer
           ))}
         </div>
 
-        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
-          <ShieldCheck className="w-4 h-4 text-emerald-600" />
-          <span>100% NCMF & Islamic Council Verified</span>
+        {/* Search Query placed directly beside status filter */}
+        <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="relative flex-1 sm:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Search cert ID, body, or venue..."
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+            />
+            {search.length > 0 && (
+              <button
+                onClick={() => setSearch('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 cursor-pointer"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
+
+          <div className="hidden md:flex items-center gap-1 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 shrink-0">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+            <span>NCMF Compliant</span>
+          </div>
         </div>
       </div>
 
