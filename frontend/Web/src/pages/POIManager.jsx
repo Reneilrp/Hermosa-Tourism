@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
 import {
   MapPin,
   Search,
@@ -28,7 +28,7 @@ const createCategoryIcon = (category, isSelected = false) => {
   const iconColor = category === 'worship' ? '#059669' : category === 'dining' ? '#d97706' : category === 'market' ? '#ea580c' : '#7c3aed';
   const size = isSelected ? 38 : 32;
   const emoji = category === 'worship' ? '🕌' : category === 'dining' ? '🍽️' : category === 'market' ? '🛍️' : '🏛️';
-  
+
   const svgHtml = `
     <div style="background-color: ${iconColor}; width: ${size}px; height: ${size}px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: ${isSelected ? '3.5px solid #fbbf24' : '2.5px solid white'}; box-shadow: 0 4px 10px rgba(0,0,0,0.35); transition: all 0.2s ease;">
       <div style="transform: rotate(45deg); color: white; font-size: ${isSelected ? '16px' : '13px'}; font-weight: bold;">
@@ -81,12 +81,6 @@ export default function POIManager({
     return matchCat && matchTier && matchSearch;
   });
 
-  const focusPOI = (poi) => {
-    setSelectedPOI(poi);
-    setMapCenter([poi.latitude, poi.longitude]);
-    setMapZoom(15);
-  };
-
   const focusPreset = (lat, lng, zoom = 14) => {
     setMapCenter([lat, lng]);
     setMapZoom(zoom);
@@ -97,39 +91,30 @@ export default function POIManager({
       {/* 1. LIST VIEW (Default Table View) */}
       {viewMode === 'list' && (
         <div className="space-y-4">
-          {/* Filter & Action Toolbar */}
-          <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-            {/* Category Tabs */}
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 sm:pb-0">
-              {[
-                { id: 'all', label: 'All Categories' },
-                { id: 'worship', label: '🕌 Mosques' },
-                { id: 'dining', label: '🍽️ Halal Dining' },
-                { id: 'market', label: '🛍️ Barter Markets' },
-                { id: 'cultural', label: '🏛️ Cultural' },
-              ].map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setSelectedCategory(cat.id)}
-                  className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                    selectedCategory === cat.id
-                      ? 'bg-slate-900 text-white'
-                      : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
+          {/* Single-Row Unified Filter & Action Toolbar */}
+          <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between gap-3">
+            {/* Left Controls: Category Dropdown + Tier Dropdown + Search in One Row */}
+            <div className="flex items-center gap-2.5 flex-1 min-w-0">
+              {/* Category Option Dropdown */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer shrink-0 transition-colors"
+              >
+                <option value="all">📂 All Categories ({pois.length})</option>
+                <option value="worship">🕌 Mosques & Masjids</option>
+                <option value="dining">🍽️ Halal Dining & Food</option>
+                <option value="market">🛍️ Barter Trade Markets</option>
+                <option value="cultural">🏛️ Cultural Heritage</option>
+              </select>
 
-            {/* Right Controls: Tier Selector + Search Input + Add Place Button */}
-            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+              {/* Halal Tier Option Dropdown */}
               <select
                 value={selectedTier}
                 onChange={(e) => setSelectedTier(e.target.value)}
-                className="bg-slate-50 border border-slate-200 rounded-xl px-3 py-1.5 text-xs font-semibold text-slate-700 outline-none cursor-pointer"
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none cursor-pointer shrink-0 transition-colors"
               >
-                <option value="all">All Halal Tiers</option>
+                <option value="all">🛡️ All Halal Tiers</option>
                 <option value="tier1">Tier 1: Certified / Mosque</option>
                 <option value="tier2">Tier 2: Muslim-Owned</option>
                 <option value="tier3">Tier 3: Halal Options</option>
@@ -137,14 +122,14 @@ export default function POIManager({
               </select>
 
               {/* Search Query Input */}
-              <div className="relative flex-1 sm:w-60">
+              <div className="relative flex-1 max-w-md">
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
-                  placeholder="Search places in Zamboanga..."
+                  placeholder="Search places, barangays, or dishes..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-2 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
                 />
                 {search.length > 0 && (
                   <button
@@ -155,15 +140,16 @@ export default function POIManager({
                   </button>
                 )}
               </div>
-
-              <button
-                onClick={() => onAddNewPOI('worship')}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
-              >
-                <Plus className="w-3.5 h-3.5" />
-                <span>+ Add New Place / Mosque</span>
-              </button>
             </div>
+
+            {/* Right Action: Add New Place / Mosque */}
+            <button
+              onClick={() => onAddNewPOI('worship')}
+              className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2 rounded-xl shadow-xs transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+            >
+              <Plus className="w-4 h-4" />
+              <span>Add New Place / Mosque</span>
+            </button>
           </div>
 
           {/* Places Table */}
@@ -255,14 +241,40 @@ export default function POIManager({
         </div>
       )}
 
-      {/* 2. MAP VIEW (Full-Canvas Interactive GIS Map like Evac_Route Web) */}
+      {/* 2. MAP VIEW (Single-Row Floating Overlay Bar) */}
       {viewMode === 'map' && (
         <div className="relative h-[calc(100vh-10.5rem)] rounded-3xl overflow-hidden border border-slate-200 shadow-sm flex flex-col">
-          {/* Top Floating Map Controls: Filters + Search + Add Button */}
-          <div className="absolute top-4 left-4 right-4 z-20 flex flex-wrap items-center justify-between gap-3 pointer-events-none">
-            {/* Floating Left: Category Pills & Search */}
-            <div className="flex flex-wrap items-center gap-2 pointer-events-auto bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200/80">
-              <div className="relative w-48 sm:w-56">
+          {/* Single-Row Floating Bar on Top of Map */}
+          <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between gap-2.5 pointer-events-none">
+            {/* Left Single-Row Dropdowns & Search */}
+            <div className="flex items-center gap-2 pointer-events-auto bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200/80">
+              {/* Category Dropdown */}
+              <select
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 outline-none cursor-pointer transition-colors"
+              >
+                <option value="all">📂 All Categories ({pois.length})</option>
+                <option value="worship">🕌 Mosques</option>
+                <option value="dining">🍽️ Dining</option>
+                <option value="market">🛍️ Markets</option>
+                <option value="cultural">🏛️ Cultural</option>
+              </select>
+
+              {/* Tier Dropdown */}
+              <select
+                value={selectedTier}
+                onChange={(e) => setSelectedTier(e.target.value)}
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none cursor-pointer transition-colors"
+              >
+                <option value="all">🛡️ All Tiers</option>
+                <option value="tier1">Tier 1: Certified</option>
+                <option value="tier2">Tier 2: Muslim-Owned</option>
+                <option value="tier3">Tier 3: Options</option>
+              </select>
+
+              {/* Search Map Pins */}
+              <div className="relative w-44 sm:w-52">
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
@@ -277,36 +289,12 @@ export default function POIManager({
                   </button>
                 )}
               </div>
-
-              <div className="h-4 w-px bg-slate-200 mx-0.5" />
-
-              <div className="flex items-center gap-1 overflow-x-auto">
-                {[
-                  { id: 'all', label: `All (${pois.length})` },
-                  { id: 'worship', label: '🕌 Mosques' },
-                  { id: 'dining', label: '🍽️ Dining' },
-                  { id: 'market', label: '🛍️ Markets' },
-                  { id: 'cultural', label: '🏛️ Cultural' },
-                ].map((c) => (
-                  <button
-                    key={c.id}
-                    onClick={() => setSelectedCategory(c.id)}
-                    className={`px-2.5 py-1 rounded-lg text-[11px] font-extrabold transition-all cursor-pointer ${
-                      selectedCategory === c.id
-                        ? 'bg-slate-900 text-white shadow-xs'
-                        : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-                    }`}
-                  >
-                    {c.label}
-                  </button>
-                ))}
-              </div>
             </div>
 
-            {/* Floating Right: Quick Presets & Add Place Action */}
+            {/* Right Quick Presets & Add Place Button in Same Row */}
             <div className="flex items-center gap-2 pointer-events-auto">
               <div className="hidden lg:flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200/80 text-[10px] font-bold text-slate-600">
-                <span className="px-1.5 text-slate-400">Focus:</span>
+                <span className="px-1 text-slate-400">Focus:</span>
                 <button
                   onClick={() => focusPreset(6.9580, 122.1400, 15)}
                   className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
@@ -317,7 +305,7 @@ export default function POIManager({
                   onClick={() => focusPreset(6.9142, 122.0590, 15)}
                   className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
                 >
-                  WMSU Campus
+                  WMSU
                 </button>
                 <button
                   onClick={() => focusPreset(6.9555, 122.1795, 15)}
@@ -329,7 +317,7 @@ export default function POIManager({
 
               <button
                 onClick={() => onAddNewPOI('worship')}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-2xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-2xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
               >
                 <Plus className="w-3.5 h-3.5" />
                 <span>Add Place / Mosque</span>

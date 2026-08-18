@@ -19,40 +19,29 @@ export default function RegistryExport({ pois, onExportJSON, onPrint }) {
 
   return (
     <div className="space-y-4">
-      {/* Category Filter & Search Query Strip */}
-      <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
-        <div className="flex items-center gap-1.5 overflow-x-auto">
-          <span className="text-xs font-bold text-slate-500 mr-1">Filter Registry:</span>
-          {[
-            { id: 'all', label: `All Entries (${filteredPOIs.length})` },
-            { id: 'worship', label: 'Mosques' },
-            { id: 'dining', label: 'Halal Dining' },
-            { id: 'market', label: 'Trade Markets' },
-          ].map((cat) => (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCat(cat.id)}
-              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
-                selectedCat === cat.id
-                  ? 'bg-slate-900 text-white shadow-xs'
-                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
-              }`}
-            >
-              {cat.label}
-            </button>
-          ))}
-        </div>
+      {/* Single-Row Category Filter & Search Query Strip */}
+      <div className="bg-white p-3 rounded-2xl border border-slate-200 shadow-xs flex items-center justify-between gap-3">
+        <div className="flex items-center gap-2.5 flex-1 min-w-0">
+          <select
+            value={selectedCat}
+            onChange={(e) => setSelectedCat(e.target.value)}
+            className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer shrink-0 transition-colors"
+          >
+            <option value="all">📂 All Entries ({pois.length})</option>
+            <option value="worship">🕌 Mosques & Masjids</option>
+            <option value="dining">🍽️ Halal Dining</option>
+            <option value="market">🛍️ Barter Trade Markets</option>
+            <option value="cultural">🏛️ Cultural Heritage</option>
+          </select>
 
-        {/* Search Query placed beside Category Filters */}
-        <div className="flex items-center gap-2.5 w-full sm:w-auto">
-          <div className="relative flex-1 sm:w-64">
+          <div className="relative flex-1 max-w-md">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
-              placeholder="Search table rows..."
+              placeholder="Search table rows by name, barangay, or category..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-1.5 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
+              className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-2 text-xs font-medium text-slate-800 placeholder:text-slate-400 focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500 outline-none"
             />
             {search.length > 0 && (
               <button
@@ -63,6 +52,11 @@ export default function RegistryExport({ pois, onExportJSON, onPrint }) {
               </button>
             )}
           </div>
+        </div>
+
+        <div className="hidden sm:flex items-center gap-1.5 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200 shrink-0">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>City Tourism Verified</span>
         </div>
       </div>
 
