@@ -51,7 +51,7 @@ export default function ReviewModeration({ pois }) {
       {/* Header */}
       <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
         <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-          <MessageSquareCheck className="w-5 h-5 text-emerald-600" />
+          <MessageSquare className="w-5 h-5 text-emerald-600" />
           Community Reviews & Visitor Verification Moderation
         </h2>
         <p className="text-xs text-slate-500">
