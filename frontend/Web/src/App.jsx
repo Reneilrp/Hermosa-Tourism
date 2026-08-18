@@ -16,6 +16,7 @@ export default function App() {
   const [pois, setPois] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPOI, setEditingPOI] = useState(null);
+  const [modalCategory, setModalCategory] = useState('worship');
 
   useEffect(() => {
     async function loadData() {
@@ -30,8 +31,9 @@ export default function App() {
     setActiveTab(tabId);
   };
 
-  const handleAddNewPOI = () => {
+  const handleAddNewPOI = (category = 'worship') => {
     setEditingPOI(null);
+    setModalCategory(typeof category === 'string' ? category : 'worship');
     setIsModalOpen(true);
   };
 
@@ -99,7 +101,7 @@ export default function App() {
           {activeTab === 'dashboard' && (
             <DashboardOverview
               pois={pois}
-              onAddNewPOI={handleAddNewPOI}
+              onAddNewPOI={() => handleAddNewPOI('worship')}
               onSelectTab={handleTabChange}
             />
           )}
@@ -108,7 +110,7 @@ export default function App() {
             <POIManager
               pois={pois}
               searchFilter={searchTerm}
-              onAddNewPOI={handleAddNewPOI}
+              onAddNewPOI={() => handleAddNewPOI('worship')}
               onEditPOI={handleEditPOI}
               onDeletePOI={handleDeletePOI}
             />
@@ -143,6 +145,7 @@ export default function App() {
         onClose={() => setIsModalOpen(false)}
         onSave={handleSavePOI}
         initialData={editingPOI}
+        defaultCategory={modalCategory}
       />
     </div>
   );
