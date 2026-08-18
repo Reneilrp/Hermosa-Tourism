@@ -1,18 +1,28 @@
 import React, { useState } from 'react';
 import { Moon, Droplets, Users, Snowflake, Sparkles, Building, CheckCircle2 } from 'lucide-react';
 
-export default function MosqueFacilities({ pois }) {
+export default function MosqueFacilities({ pois, searchFilter = '' }) {
   const mosques = pois.filter((p) => p.category === 'worship');
   const [filterAmenity, setFilterAmenity] = useState('all');
 
+  const filteredMosques = mosques.filter((m) => {
+    const query = searchFilter.trim().toLowerCase();
+    const matchSearch =
+      query === '' ||
+      m.name.toLowerCase().includes(query) ||
+      m.address.toLowerCase().includes(query) ||
+      (m.cuisine && m.cuisine.toLowerCase().includes(query));
+    return matchSearch;
+  });
+
   return (
     <div className="space-y-4">
-      {/* Amenities Filter Toolbar (No duplicate header) */}
+      {/* Amenities Filter Toolbar */}
       <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-bold text-slate-500 mr-1">Facility Highlights:</span>
           {[
-            { id: 'all', label: `All Masjids (${mosques.length})` },
+            { id: 'all', label: `All Masjids (${filteredMosques.length})` },
             { id: 'wudu', label: '💧 Running Wudu' },
             { id: 'female', label: '👥 Female Mezzanine' },
             { id: 'ac', label: '❄️ Air-Cooled' },
@@ -39,7 +49,7 @@ export default function MosqueFacilities({ pois }) {
 
       {/* Mosque Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {mosques.map((mosque) => (
+        {filteredMosques.map((mosque) => (
           <div key={mosque.id} className="bg-white rounded-2xl p-5 border border-slate-200 shadow-xs flex flex-col justify-between space-y-4 hover:border-emerald-300 transition-all">
             <div>
               <div className="flex items-center gap-3">

@@ -25,6 +25,11 @@ export default function App() {
     loadData();
   }, []);
 
+  const handleTabChange = (tabId) => {
+    setSearchTerm('');
+    setActiveTab(tabId);
+  };
+
   const handleAddNewPOI = () => {
     setEditingPOI(null);
     setIsModalOpen(true);
@@ -74,7 +79,7 @@ export default function App() {
   return (
     <div className="flex h-screen bg-slate-100 overflow-hidden font-sans">
       {/* Sidebar */}
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+      <Sidebar activeTab={activeTab} setActiveTab={handleTabChange} />
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
@@ -95,7 +100,7 @@ export default function App() {
             <DashboardOverview
               pois={pois}
               onAddNewPOI={handleAddNewPOI}
-              onSelectTab={setActiveTab}
+              onSelectTab={handleTabChange}
             />
           )}
 
@@ -114,16 +119,17 @@ export default function App() {
           )}
 
           {activeTab === 'mosques' && (
-            <MosqueFacilities pois={pois} />
+            <MosqueFacilities pois={pois} searchFilter={searchTerm} />
           )}
 
           {activeTab === 'reviews' && (
-            <ReviewModeration pois={pois} />
+            <ReviewModeration pois={pois} searchFilter={searchTerm} />
           )}
 
           {activeTab === 'reports' && (
             <RegistryExport
               pois={pois}
+              searchFilter={searchTerm}
               onExportJSON={handleExportJSON}
               onPrint={handlePrintReport}
             />

@@ -1,7 +1,18 @@
 import React from 'react';
 import { FileSpreadsheet, Download, Printer, ShieldCheck, FileText, CheckCircle2 } from 'lucide-react';
 
-export default function RegistryExport({ pois, onExportJSON, onPrint }) {
+export default function RegistryExport({ pois, searchFilter = '', onExportJSON, onPrint }) {
+  const filteredPOIs = pois.filter((poi) => {
+    const query = searchFilter.trim().toLowerCase();
+    return (
+      query === '' ||
+      poi.name.toLowerCase().includes(query) ||
+      poi.address.toLowerCase().includes(query) ||
+      poi.category.toLowerCase().includes(query) ||
+      poi.tier.toLowerCase().includes(query)
+    );
+  });
+
   return (
     <div className="space-y-4">
       {/* Printable Official Registry Card */}
@@ -59,7 +70,7 @@ export default function RegistryExport({ pois, onExportJSON, onPrint }) {
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 font-medium text-slate-800">
-              {pois.map((poi, idx) => (
+              {filteredPOIs.map((poi, idx) => (
                 <tr key={poi.id}>
                   <td className="p-3 font-bold text-slate-400">{idx + 1}</td>
                   <td className="p-3 font-extrabold text-slate-900">{poi.name}</td>

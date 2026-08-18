@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MessageSquare, Star, CheckCircle, XCircle, ShieldCheck, Flag } from 'lucide-react';
 
-export default function ReviewModeration({ pois }) {
+export default function ReviewModeration({ pois, searchFilter = '' }) {
   const [reviews, setReviews] = useState([
     {
       id: 'rev-1',
@@ -49,18 +49,24 @@ export default function ReviewModeration({ pois }) {
   };
 
   const filtered = reviews.filter((r) => {
-    if (filterRating === 'all') return true;
-    return r.rating === Number(filterRating);
+    const matchRating = filterRating === 'all' || r.rating === Number(filterRating);
+    const query = searchFilter.trim().toLowerCase();
+    const matchSearch =
+      query === '' ||
+      r.placeName.toLowerCase().includes(query) ||
+      r.author.toLowerCase().includes(query) ||
+      r.comment.toLowerCase().includes(query);
+    return matchRating && matchSearch;
   });
 
   return (
     <div className="space-y-4">
-      {/* Moderation Filter Toolbar (No duplicate header) */}
+      {/* Moderation Filter Toolbar */}
       <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-bold text-slate-500 mr-1">Filter Reviews:</span>
           {[
-            { id: 'all', label: `All Reviews (${reviews.length})` },
+            { id: 'all', label: `All Reviews (${filtered.length})` },
             { id: '5', label: '⭐ 5 Stars Only' },
           ].map((item) => (
             <button

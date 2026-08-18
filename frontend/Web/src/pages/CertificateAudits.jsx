@@ -10,7 +10,7 @@ import {
   Calendar,
 } from 'lucide-react';
 
-export default function CertificateAudits({ pois, onUpdateCertStatus }) {
+export default function CertificateAudits({ pois, searchFilter = '', onUpdateCertStatus }) {
   const [filterStatus, setFilterStatus] = useState('all');
 
   const certificates = pois.map((p) => ({
@@ -26,13 +26,20 @@ export default function CertificateAudits({ pois, onUpdateCertStatus }) {
   }));
 
   const filteredCerts = certificates.filter((c) => {
-    if (filterStatus === 'all') return true;
-    return c.status === filterStatus;
+    const matchStatus = filterStatus === 'all' || c.status === filterStatus;
+    const query = searchFilter.trim().toLowerCase();
+    const matchSearch =
+      query === '' ||
+      c.poiName.toLowerCase().includes(query) ||
+      c.certNumber.toLowerCase().includes(query) ||
+      c.certBody.toLowerCase().includes(query) ||
+      c.address.toLowerCase().includes(query);
+    return matchStatus && matchSearch;
   });
 
   return (
     <div className="space-y-4">
-      {/* Filter Toolbar (No duplicate header) */}
+      {/* Filter Toolbar */}
       <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
         <div className="flex items-center gap-1.5">
           <span className="text-xs font-bold text-slate-500 mr-1">Filter Status:</span>
