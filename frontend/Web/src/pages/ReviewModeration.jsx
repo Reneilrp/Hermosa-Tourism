@@ -38,6 +38,8 @@ export default function ReviewModeration({ pois }) {
     },
   ]);
 
+  const [filterRating, setFilterRating] = useState('all');
+
   const handleApprove = (id) => {
     setReviews((prev) => prev.map((r) => (r.id === id ? { ...r, status: 'approved' } : r)));
   };
@@ -46,23 +48,45 @@ export default function ReviewModeration({ pois }) {
     setReviews((prev) => prev.filter((r) => r.id !== id));
   };
 
+  const filtered = reviews.filter((r) => {
+    if (filterRating === 'all') return true;
+    return r.rating === Number(filterRating);
+  });
+
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-          <MessageSquare className="w-5 h-5 text-emerald-600" />
-          Community Reviews & Visitor Verification Moderation
-        </h2>
-        <p className="text-xs text-slate-500">
-          Moderate community feedback, verify pilgrim visit checkmarks, and flag inappropriate submissions
-        </p>
+    <div className="space-y-4">
+      {/* Moderation Filter Toolbar (No duplicate header) */}
+      <div className="bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs flex flex-wrap items-center justify-between gap-3">
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-bold text-slate-500 mr-1">Filter Reviews:</span>
+          {[
+            { id: 'all', label: `All Reviews (${reviews.length})` },
+            { id: '5', label: '⭐ 5 Stars Only' },
+          ].map((item) => (
+            <button
+              key={item.id}
+              onClick={() => setFilterRating(item.id)}
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
+                filterRating === item.id
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
+              }`}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>Verified Pilgrim Checkmarks Active</span>
+        </div>
       </div>
 
       {/* Review List */}
       <div className="space-y-3">
-        {reviews.map((rev) => (
-          <div key={rev.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4">
+        {filtered.map((rev) => (
+          <div key={rev.id} className="bg-white p-5 rounded-2xl border border-slate-200 shadow-xs flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-emerald-300 transition-all">
             <div className="space-y-1.5 flex-1">
               <div className="flex items-center gap-2">
                 <span className="font-extrabold text-sm text-slate-900">{rev.placeName}</span>

@@ -31,38 +31,33 @@ export default function CertificateAudits({ pois, onUpdateCertStatus }) {
   });
 
   return (
-    <div className="space-y-5">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-xs">
-        <div>
-          <h2 className="text-lg font-extrabold text-slate-900 flex items-center gap-2">
-            <FileCheck2 className="w-5 h-5 text-emerald-600" />
-            Halal Certificate Verification & Audit Pipeline
-          </h2>
-          <p className="text-xs text-slate-500">
-            Audit proof documents, certifying bodies (NCMF, JAKIM, Local Councils), and expiration validity
-          </p>
-        </div>
-
-        {/* Status Filter */}
-        <div className="flex items-center gap-1.5 bg-slate-50 p-1 rounded-xl border border-slate-200">
+    <div className="space-y-4">
+      {/* Filter Toolbar (No duplicate header) */}
+      <div className="flex flex-wrap items-center justify-between gap-3 bg-white p-3.5 rounded-2xl border border-slate-200 shadow-xs">
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs font-bold text-slate-500 mr-1">Filter Status:</span>
           {[
-            { id: 'all', label: 'All Certs' },
+            { id: 'all', label: `All Certs (${certificates.length})` },
             { id: 'approved', label: 'Approved & Active' },
             { id: 'pending', label: 'Under Review' },
           ].map((s) => (
             <button
               key={s.id}
               onClick={() => setFilterStatus(s.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+              className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer ${
                 filterStatus === s.id
-                  ? 'bg-emerald-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-slate-900 text-white shadow-xs'
+                  : 'bg-slate-50 text-slate-600 hover:bg-slate-100'
               }`}
             >
               {s.label}
             </button>
           ))}
+        </div>
+
+        <div className="flex items-center gap-2 text-xs font-semibold text-emerald-800 bg-emerald-50 px-3 py-1.5 rounded-xl border border-emerald-200">
+          <ShieldCheck className="w-4 h-4 text-emerald-600" />
+          <span>100% NCMF & Islamic Council Verified</span>
         </div>
       </div>
 
@@ -103,13 +98,13 @@ export default function CertificateAudits({ pois, onUpdateCertStatus }) {
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2 text-xs">
               <button
                 onClick={() => alert(`Certificate ${cert.certNumber} verified by Zamboanga Islamic Council.`)}
-                className="flex-1 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 font-bold hover:bg-emerald-100 transition-all text-center"
+                className="flex-1 py-1.5 rounded-lg bg-emerald-50 text-emerald-700 font-bold hover:bg-emerald-100 transition-all text-center cursor-pointer"
               >
                 Inspect Doc
               </button>
               <button
                 onClick={() => alert(`Renewal notice sent for ${cert.poiName}`)}
-                className="py-1.5 px-3 rounded-lg bg-slate-50 text-slate-600 font-semibold hover:bg-slate-100 transition-all"
+                className="py-1.5 px-3 rounded-lg bg-slate-50 text-slate-600 font-semibold hover:bg-slate-100 transition-all cursor-pointer"
               >
                 Audit
               </button>
