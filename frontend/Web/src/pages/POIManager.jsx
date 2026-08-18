@@ -26,11 +26,11 @@ import L from 'leaflet';
 // Create custom category-specific colored markers for Leaflet
 const createCategoryIcon = (category, isSelected = false) => {
   const iconColor = category === 'worship' ? '#059669' : category === 'dining' ? '#d97706' : category === 'market' ? '#ea580c' : '#7c3aed';
-  const size = isSelected ? 38 : 32;
+  const size = isSelected ? 40 : 34;
   const emoji = category === 'worship' ? '🕌' : category === 'dining' ? '🍽️' : category === 'market' ? '🛍️' : '🏛️';
 
   const svgHtml = `
-    <div style="background-color: ${iconColor}; width: ${size}px; height: ${size}px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: ${isSelected ? '3.5px solid #fbbf24' : '2.5px solid white'}; box-shadow: 0 4px 10px rgba(0,0,0,0.35); transition: all 0.2s ease;">
+    <div style="background-color: ${iconColor}; width: ${size}px; height: ${size}px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; border: ${isSelected ? '3.5px solid #fbbf24' : '2.5px solid white'}; box-shadow: 0 6px 14px rgba(0,0,0,0.4); transition: all 0.2s ease;">
       <div style="transform: rotate(45deg); color: white; font-size: ${isSelected ? '16px' : '13px'}; font-weight: bold;">
         ${emoji}
       </div>
@@ -87,8 +87,8 @@ export default function POIManager({
   };
 
   return (
-    <div className="space-y-4">
-      {/* 1. LIST VIEW (Default Table View) */}
+    <>
+      {/* 1. LIST VIEW (Default Table with Padding & Filter Strip) */}
       {viewMode === 'list' && (
         <div className="space-y-4">
           {/* Single-Row Unified Filter & Action Toolbar */}
@@ -241,18 +241,18 @@ export default function POIManager({
         </div>
       )}
 
-      {/* 2. MAP VIEW (Single-Row Floating Overlay Bar) */}
+      {/* 2. MAP VIEW (Edge-to-Edge 100% Full Canvas between Sidebar & Navbar) */}
       {viewMode === 'map' && (
-        <div className="relative h-[calc(100vh-10.5rem)] rounded-3xl overflow-hidden border border-slate-200 shadow-sm flex flex-col">
+        <div className="w-full h-full relative overflow-hidden bg-slate-200">
           {/* Single-Row Floating Bar on Top of Map */}
-          <div className="absolute top-4 left-4 right-4 z-20 flex items-center justify-between gap-2.5 pointer-events-none">
+          <div className="absolute top-5 left-5 right-5 z-20 flex items-center justify-between gap-3 pointer-events-none">
             {/* Left Single-Row Dropdowns & Search */}
-            <div className="flex items-center gap-2 pointer-events-auto bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200/80">
+            <div className="flex items-center gap-2 pointer-events-auto bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-xl border border-slate-200/90">
               {/* Category Dropdown */}
               <select
                 value={selectedCategory}
                 onChange={(e) => setSelectedCategory(e.target.value)}
-                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-800 outline-none cursor-pointer transition-colors"
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-800 outline-none cursor-pointer transition-colors"
               >
                 <option value="all">📂 All Categories ({pois.length})</option>
                 <option value="worship">🕌 Mosques</option>
@@ -265,7 +265,7 @@ export default function POIManager({
               <select
                 value={selectedTier}
                 onChange={(e) => setSelectedTier(e.target.value)}
-                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-2.5 py-1.5 text-xs font-bold text-slate-700 outline-none cursor-pointer transition-colors"
+                className="bg-slate-50 hover:bg-slate-100 border border-slate-200 rounded-xl px-3 py-2 text-xs font-bold text-slate-700 outline-none cursor-pointer transition-colors"
               >
                 <option value="all">🛡️ All Tiers</option>
                 <option value="tier1">Tier 1: Certified</option>
@@ -274,14 +274,14 @@ export default function POIManager({
               </select>
 
               {/* Search Map Pins */}
-              <div className="relative w-44 sm:w-52">
+              <div className="relative w-48 sm:w-60">
                 <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
                 <input
                   type="text"
                   placeholder="Filter map pins..."
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-6 py-1.5 text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-8 pr-7 py-2 text-xs font-semibold text-slate-800 placeholder:text-slate-400 focus:outline-none"
                 />
                 {search.length > 0 && (
                   <button onClick={() => setSearch('')} className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
@@ -293,23 +293,23 @@ export default function POIManager({
 
             {/* Right Quick Presets & Add Place Button in Same Row */}
             <div className="flex items-center gap-2 pointer-events-auto">
-              <div className="hidden lg:flex items-center gap-1 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-lg border border-slate-200/80 text-[10px] font-bold text-slate-600">
-                <span className="px-1 text-slate-400">Focus:</span>
+              <div className="hidden lg:flex items-center gap-1.5 bg-white/95 backdrop-blur-md p-1.5 rounded-2xl shadow-xl border border-slate-200/90 text-[11px] font-bold text-slate-700">
+                <span className="px-1.5 text-slate-400">Focus:</span>
                 <button
                   onClick={() => focusPreset(6.9580, 122.1400, 15)}
-                  className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
                 >
                   Mercedes Grand Mosque
                 </button>
                 <button
                   onClick={() => focusPreset(6.9142, 122.0590, 15)}
-                  className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
                 >
-                  WMSU
+                  WMSU Campus
                 </button>
                 <button
                   onClick={() => focusPreset(6.9555, 122.1795, 15)}
-                  className="px-2 py-1 rounded-lg bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
+                  className="px-2.5 py-1.5 rounded-xl bg-emerald-50 hover:bg-emerald-100 text-emerald-800 transition-all cursor-pointer"
                 >
                   Taluksangay
                 </button>
@@ -317,16 +317,16 @@ export default function POIManager({
 
               <button
                 onClick={() => onAddNewPOI('worship')}
-                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-3.5 py-2 rounded-2xl shadow-lg transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
+                className="bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs px-4 py-2.5 rounded-2xl shadow-xl transition-all flex items-center gap-1.5 cursor-pointer shrink-0"
               >
-                <Plus className="w-3.5 h-3.5" />
+                <Plus className="w-4 h-4" />
                 <span>Add Place / Mosque</span>
               </button>
             </div>
           </div>
 
-          {/* Leaflet GIS Map Container */}
-          <div className="w-full h-full relative z-10">
+          {/* Full-Bleed 100% Leaflet GIS Canvas */}
+          <div className="w-full h-full absolute inset-0 z-10">
             <MapContainer
               center={mapCenter}
               zoom={mapZoom}
@@ -361,22 +361,22 @@ export default function POIManager({
 
           {/* Left Slide-Over / Floating Selected Landmark Detail Card */}
           {selectedPOI && (
-            <div className="absolute top-20 left-4 z-30 w-80 bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden animate-in slide-in-from-left duration-200">
+            <div className="absolute top-22 left-5 z-30 w-84 bg-white/95 backdrop-blur-md rounded-3xl shadow-2xl border border-slate-200/90 overflow-hidden animate-in slide-in-from-left duration-200">
               <div className="relative">
                 <img
                   src={selectedPOI.image}
                   alt={selectedPOI.name}
-                  className="w-full h-32 object-cover bg-slate-100"
+                  className="w-full h-36 object-cover bg-slate-100"
                 />
                 <button
                   onClick={() => setSelectedPOI(null)}
-                  className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-all cursor-pointer"
+                  className="absolute top-2.5 right-2.5 w-7 h-7 rounded-full bg-slate-900/70 hover:bg-slate-900 text-white flex items-center justify-center transition-all cursor-pointer shadow-md"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
                 <div className="absolute bottom-2.5 left-2.5">
                   <span
-                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-lg shadow-sm ${
+                    className={`text-[10px] font-extrabold px-2.5 py-1 rounded-lg shadow-md ${
                       selectedPOI.tier === 'tier1'
                         ? 'bg-emerald-600 text-white'
                         : selectedPOI.tier === 'tier2'
@@ -398,7 +398,7 @@ export default function POIManager({
                   </p>
                 </div>
 
-                <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-100 space-y-1 text-xs">
+                <div className="bg-slate-50 p-2.5 rounded-2xl border border-slate-100 space-y-1 text-xs">
                   <div className="flex items-center justify-between text-[11px]">
                     <span className="text-slate-500 font-semibold">Coordinates:</span>
                     <span className="font-mono font-bold text-slate-700">{selectedPOI.latitude?.toFixed(4)}, {selectedPOI.longitude?.toFixed(4)}</span>
@@ -435,7 +435,7 @@ export default function POIManager({
           )}
 
           {/* Bottom Right Floating Minimal Legend */}
-          <div className="absolute bottom-4 right-4 z-20 bg-white/95 backdrop-blur-md px-3.5 py-2 rounded-2xl shadow-lg border border-slate-200/80 flex items-center gap-3 text-[11px] font-bold text-slate-700">
+          <div className="absolute bottom-5 right-5 z-20 bg-white/95 backdrop-blur-md px-4 py-2.5 rounded-2xl shadow-xl border border-slate-200/90 flex items-center gap-3.5 text-xs font-bold text-slate-700">
             <span className="text-[10px] uppercase tracking-wider text-slate-400 font-extrabold">Legend:</span>
             <span className="flex items-center gap-1 text-emerald-800">
               <span className="w-2.5 h-2.5 rounded-full bg-emerald-600 inline-block" /> Mosques
@@ -452,6 +452,6 @@ export default function POIManager({
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 }

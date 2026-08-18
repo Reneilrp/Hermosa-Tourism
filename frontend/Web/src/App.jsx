@@ -79,6 +79,8 @@ export default function App() {
     window.print();
   };
 
+  const isEdgeToEdgeMap = activeTab === 'pois' && poiViewMode === 'map';
+
   return (
     <div className="flex h-screen bg-slate-100 overflow-hidden font-sans">
       {/* Sidebar */}
@@ -99,8 +101,12 @@ export default function App() {
           setPoiViewMode={setPoiViewMode}
         />
 
-        {/* Dynamic Page Content */}
-        <main className="flex-1 overflow-y-auto p-6 space-y-6">
+        {/* Dynamic Page Content: Edge-to-Edge for MapView, Padded for List/Other Views */}
+        <main
+          className={`flex-1 overflow-hidden relative ${
+            isEdgeToEdgeMap ? 'p-0' : 'overflow-y-auto p-6 space-y-6'
+          }`}
+        >
           {activeTab === 'dashboard' && (
             <DashboardOverview
               pois={pois}
