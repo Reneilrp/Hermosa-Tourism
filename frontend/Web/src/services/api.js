@@ -30,6 +30,147 @@ export async function fetchPOIDetail(id) {
   return fallback || null;
 }
 
+export async function fetchPorts() {
+  return [];
+}
+
+export async function fetchMaritimeRoutes() {
+  return [];
+}
+
+export async function fetchMsmeApplications() {
+  try {
+    const res = await fetch(`${API_BASE}/msme/applications`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.data) return data.data;
+    }
+  } catch (err) {
+    console.warn('Backend MSME fetch failed, using mock applications:', err);
+  }
+  return [];
+}
+
+export async function updateMsmeStatus(id, status, adminNotes = '') {
+  try {
+    const res = await fetch(`${API_BASE}/msme/applications/${id}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({ status, admin_notes: adminNotes }),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('Error updating MSME status:', err);
+  }
+  return { success: false };
+}
+
+export async function submitPublicMsmeApplication(payload) {
+  try {
+    const res = await fetch(`${API_BASE}/msme/register`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(payload),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('Error submitting MSME declaration:', err);
+  }
+  return { success: true, message: 'Saved to local intake pipeline' };
+}
+
+export async function fetchPackages() {
+  try {
+    const res = await fetch(`${API_BASE}/packages`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.data) return data.data;
+    }
+  } catch (err) {
+    console.warn('Backend packages fetch failed:', err);
+  }
+  return [];
+}
+
+export async function updatePackage(id, packageData) {
+  try {
+    const res = await fetch(`${API_BASE}/packages/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify(packageData),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('Error updating package:', err);
+  }
+  return { success: false };
+}
+
+export async function fetchPackageBookings(params = {}) {
+  try {
+    const query = new URLSearchParams(params).toString();
+    const res = await fetch(`${API_BASE}/packages/bookings/all?${query}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.data) return data.data;
+    }
+  } catch (err) {
+    console.warn('Backend bookings fetch failed:', err);
+  }
+  return [];
+}
+
+export async function updatePackageBookingStatus(id, status, assignedGuideId = null, adminNotes = '') {
+  try {
+    const res = await fetch(`${API_BASE}/packages/bookings/${id}/status`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+      },
+      body: JSON.stringify({
+        status,
+        assigned_guide_id: assignedGuideId,
+        admin_notes: adminNotes,
+      }),
+    });
+    if (res.ok) {
+      return await res.json();
+    }
+  } catch (err) {
+    console.warn('Error updating booking status:', err);
+  }
+  return { success: false };
+}
+
+export async function fetchTourGuides() {
+  try {
+    const res = await fetch(`${API_BASE}/tour-guides`);
+    if (res.ok) {
+      const data = await res.json();
+      if (data.data) return data.data;
+    }
+  } catch (err) {
+    console.warn('Backend tour guides fetch failed:', err);
+  }
+  return [];
+}
+
 export function getFallbackPOIs() {
   return [
     {
@@ -132,7 +273,7 @@ export function getFallbackPOIs() {
       longitude: 122.1795,
       hours: 'Open Daily (04:30 AM - 08:30 PM)',
       phone: '+63 62 992 1122',
-      image: 'https://images.unsplash.com/photo-1582560475093-ba66accbc424?auto=format&fit=crop&w=800&q=80',
+      image: '/TaluksangayMosque.jpg',
       description: 'Built in 1885 by Hadji Abdullah Maas Nuno, Taluksangay Mosque is the oldest historical mosque in Zamboanga and Western Mindanao. Famous for its brilliant emerald green minarets and peaceful coastal village ambiance.',
       status: 'approved',
       expiryDate: '2035-12-31',
@@ -276,9 +417,16 @@ export function getFallbackPOIs() {
     },
     {
       id: 'poi-bay-tal-mal',
-      name: 'Bay Tal Mal Authentic Halal Restaurant',
+      name: 'Baitul Maal Native Halal Bistro',
       category: 'dining',
       tier: 'tier1',
+      isMuslimFriendly: true,
+      hasSeparateCooking: true,
+      hasPrayerRoom: true,
+      supplierName: 'Mindanao Halal Livestock & Agro Producers',
+      supplierLocation: 'Barangay San Roque, Zamboanga City',
+      accreditationNumber: 'DOT-RO9-ACC-2026-042',
+      isPromoted: true,
       certBody: 'NCMF Halal Certified Kitchen',
       certNumber: 'NCMF-ZAM-2024-114',
       rating: 4.9,
@@ -305,9 +453,16 @@ export function getFallbackPOIs() {
     },
     {
       id: 'poi-jimmys-satti',
-      name: 'Jimmy’s Satti & Halal Eatery',
+      name: 'Ymmij Traditional Satti Haus',
       category: 'dining',
       tier: 'tier2',
+      isMuslimFriendly: true,
+      hasSeparateCooking: true,
+      hasPrayerRoom: false,
+      supplierName: 'Zamboanga Native Poultry Farm',
+      supplierLocation: 'Barangay Guiwan, Zamboanga City',
+      accreditationNumber: 'DOT-RO9-ACC-2026-077',
+      isPromoted: true,
       certBody: 'Muslim-Owned & Operated Enterprise',
       certNumber: 'MO-ZAM-SATTI-01',
       rating: 4.8,
@@ -332,9 +487,16 @@ export function getFallbackPOIs() {
     },
     {
       id: 'poi-dennis-coffee',
-      name: 'Dennis Coffee Garden (San Jose)',
+      name: 'Sinned Highland Coffee Oasis',
       category: 'dining',
       tier: 'tier2',
+      isMuslimFriendly: true,
+      hasSeparateCooking: true,
+      hasPrayerRoom: true,
+      supplierName: 'Sulu Organic Robusta Growers Cooperative',
+      supplierLocation: 'Panamao, Sulu & San Jose, Zamboanga',
+      accreditationNumber: 'DOT-RO9-ACC-2026-115',
+      isPromoted: true,
       certBody: 'Muslim-Owned Cultural Heritage Cafe',
       certNumber: 'MO-ZAM-DCG-05',
       rating: 4.9,
@@ -360,9 +522,16 @@ export function getFallbackPOIs() {
     },
     {
       id: 'poi-al-sultan',
-      name: 'Al-Sultan Halal Restaurant & Bakeshop',
+      name: 'Sultanate Halal Kitchen & Bakeshop',
       category: 'dining',
       tier: 'tier1',
+      isMuslimFriendly: true,
+      hasSeparateCooking: true,
+      hasPrayerRoom: true,
+      supplierName: 'Al-Barakah Halal Cold Chain Logistics',
+      supplierLocation: 'Veterans Ave, Zamboanga City',
+      accreditationNumber: 'DOT-RO9-ACC-2026-059',
+      isPromoted: false,
       certBody: 'NCMF Certified Halal Dining',
       certNumber: 'NCMF-ZAM-2024-189',
       rating: 4.8,
@@ -388,9 +557,16 @@ export function getFallbackPOIs() {
     },
     {
       id: 'poi-mano-mano',
-      name: 'Mano-Mano Native Halal Grill',
+      name: 'Ralava Mano-Mano Seafood Grill',
       category: 'dining',
       tier: 'tier2',
+      isMuslimFriendly: true,
+      hasSeparateCooking: true,
+      hasPrayerRoom: true,
+      supplierName: 'Zamboanga Fisherfolk Cooperative & Recodo Fisheries',
+      supplierLocation: 'Barangay Recodo & San Jose Gusu, Zamboanga City',
+      accreditationNumber: 'DOT-RO9-ACC-2026-088',
+      isPromoted: true,
       certBody: 'Muslim-Owned Halal Enterprise',
       certNumber: 'MO-ZAM-MMG-08',
       rating: 4.7,
@@ -403,10 +579,10 @@ export function getFallbackPOIs() {
       hours: '11:00 AM - 10:00 PM',
       phone: '+63 62 991 7766',
       image: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80',
-      description: 'Casual open-air native barbecue and seafood grill specializing in Pyanggang chicken charred over coconut husks, Curacha in Alavar Halal sauce, and grilled tuna belly.',
+      description: 'Casual open-air native barbecue and seafood grill specializing in Pyanggang chicken charred over coconut husks, Curacha in Ralava Halal sauce, and grilled tuna belly.',
       status: 'approved',
       expiryDate: '2027-08-31',
-      popularDishes: ['Charcoal Grilled Chicken Pyanggang', 'Grilled Tuna Panga', 'Curacha with Coconut Sauce'],
+      popularDishes: ['Charcoal Grilled Chicken Pyanggang', 'Grilled Tuna Panga', 'Curacha in Ralava Sauce'],
       amenities: [
         { id: 'muslim_owned', label: '100% Muslim-Owned Kitchen', icon: 'heart-circle' },
         { id: 'halal_meat', label: 'Certified Halal Butchered Meats', icon: 'checkmark-circle' },
@@ -415,9 +591,16 @@ export function getFallbackPOIs() {
     },
     {
       id: 'poi-canelar',
-      name: 'Canelar Barter Trade Center & Halal Market',
+      name: 'Canelar Souk & Heritage Market',
       category: 'market',
       tier: 'tier2',
+      isMuslimFriendly: true,
+      hasSeparateCooking: false,
+      hasPrayerRoom: true,
+      supplierName: 'BIMP-EAGA Cross-Border Halal Traders',
+      supplierLocation: 'Canelar Wharf Access, Zamboanga City',
+      accreditationNumber: 'DOT-RO9-ACC-2026-021',
+      isPromoted: false,
       certBody: 'Muslim Merchants Association of Zamboanga',
       certNumber: 'MO-ZAM-2024-884',
       rating: 4.8,

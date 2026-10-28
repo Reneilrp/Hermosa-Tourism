@@ -1,6 +1,52 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-hermosa-magenta: #c11944;
+  --color-hermosa-pink: #fd43a8;
+  --color-hermosa-indigo: #433458;
+  --color-hermosa-gold: #fecb00;
+  --color-hermosa-sand: #ffdef6;
+  --color-hermosa-crimson: #8e1632;
+  --color-hermosa-aqua: #69ebfe;
+
+  /* VintaGo Soft Pink Palette Tokens */
+  --color-vinta-sand-light: #fff0f8;
+  --color-vinta-sand: #ffdef6;
+  --color-vinta-sand-deep: #f8ccde;
+  --color-vinta-rose: #e82955;
+  --color-vinta-crimson: #bf1f46;
+  --color-vinta-indigo: #433458;
+  --color-vinta-indigo-dark: #2d223b;
+  --color-vinta-gold: #fecb00;
+  --color-vinta-aqua: #69ebfe;
+  --color-vinta-lilac: #d8b4e2;
+}
+
+::selection {
+  background-color: #ffdef6;
+  color: #433458;
+}
+
+html,
+body,
+#root {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  width: 100%;
+}
+
 @layer base {
+  html,
+  body,
+  #root {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+  }
+
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
   }
@@ -16,11 +62,23 @@
   background: #f1f5f9;
 }
 
+.dark ::-webkit-scrollbar-track {
+  background: #0f172a;
+}
+
 ::-webkit-scrollbar-thumb {
   background: #cbd5e1;
   border-radius: 3px;
 }
 
+.dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+}
+
 ::-webkit-scrollbar-thumb:hover {
   background: #94a3b8;
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: #475569;
 }
