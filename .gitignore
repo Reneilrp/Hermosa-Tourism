@@ -19,3 +19,21 @@ build/
 *.log
 .DS_Store
 Thumbs.db
+*.tmp
+*.bak
+*.swp
+coverage/
+.nyc_output/
+
+# IDE & Editor
+.vscode/
+.idea/
+
+# AI Tooling, Assistants & Knowledge Graphs
+.taste-skill/
+graphify-out/
+CLAUDE.md
+[Cc]laude.md
+.claude/
+GEMINI.md
+.gemini/
