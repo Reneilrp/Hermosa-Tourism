@@ -13,14 +13,18 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Seed default Admin user for Tourism Officer
-        User::factory()->create([
-            'name' => 'Zamboanga Tourism Admin',
-            'email' => 'admin@hermosa-tourism.ph',
-            'password' => bcrypt('Hermosa2026!'),
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@hermosa-tourism.ph'],
+            [
+                'name' => 'Zamboanga Tourism Admin',
+                'password' => bcrypt('Hermosa2026!'),
+            ]
+        );
 
         $this->call([
             ZamboangaPoiSeeder::class,
+            ZambasultaRegionalSeeder::class,
+            PackageAndGuideSeeder::class,
         ]);
     }
 }

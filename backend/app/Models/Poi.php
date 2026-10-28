@@ -18,6 +18,22 @@ class Poi extends Model
         'slug',
         'category',
         'tier',
+        'is_muslim_friendly',
+        'has_separate_cooking',
+        'has_prayer_room',
+        'supplier_name',
+        'supplier_location',
+        'accreditation_number',
+        'mayors_permit_number',
+        'dti_sec_registration',
+        'ra9593_compliant',
+        'is_promoted',
+        'promotion_tier',
+        'promotion_expires_at',
+        'sponsorship_notes',
+        'region',
+        'province',
+        'city_municipality',
         'latitude',
         'longitude',
         'address',
@@ -40,9 +56,22 @@ class Poi extends Model
         'rating' => 'float',
         'review_count' => 'integer',
         'popular_items' => 'array',
+        'is_muslim_friendly' => 'boolean',
+        'has_separate_cooking' => 'boolean',
+        'has_prayer_room' => 'boolean',
+        'is_promoted' => 'boolean',
+        'ra9593_compliant' => 'boolean',
         'is_verified' => 'boolean',
         'is_active' => 'boolean',
     ];
+
+    /**
+     * Determine if establishment complies with RA 9593 for official promotion.
+     */
+    public function canBePromoted(): bool
+    {
+        return ! empty($this->accreditation_number) || (bool) $this->ra9593_compliant;
+    }
 
     public function amenities(): BelongsToMany
     {
