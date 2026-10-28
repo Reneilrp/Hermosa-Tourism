@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hermosa-Tourism Halal & Cultural System - Interactive Feature Showcase</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #0D7A57;
+      --primary-dark: #064E3B;
+      --primary-light: #ECFDF5;
+      --accent: #D97706;
+      --accent-light: #FEF3C7;
+      --navy: #0B1120;
+      --slate-900: #0F172A;
+      --slate-800: #1E293B;
+      --slate-700: #334155;
+      --slate-600: #475569;
+      --slate-500: #64748B;
+      --slate-300: #CBD5E1;
+      --slate-200: #E2E8F0;
+      --slate-100: #F1F5F9;
+      --slate-50: #F8FAFC;
+      --surface: #FFFFFF;
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --radius-xl: 28px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
+      --shadow-md: 0 4px 14px rgba(0,0,0,0.08);
+      --shadow-lg: 0 10px 30px rgba(0,0,0,0.12);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: var(--slate-50);
+      color: var(--slate-900);
+      line-height: 1.6;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Container */
+    .container {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* Header & Hero */
+    header.hero {
+      background: linear-gradient(135deg, #064E3B 0%, #0D7A57 45%, #0B1120 100%);
+      color: #FFFFFF;
+      padding: 60px 0 50px;
+      position: relative;
+      overflow: hidden;
+      border-bottom: 4px solid var(--accent);
+    }
+
+    header.hero::after {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 400px;
+      height: 400px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(217, 119, 6, 0.25) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .hero-badge-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      padding: 6px 14px;
+      border-radius: 9999px;
+    }
+
+    .badge-emerald { background: rgba(16, 185, 129, 0.2); color: #A7F3D0; border: 1px solid rgba(16, 185, 129, 0.4); }
+    .badge-amber { background: rgba(217, 119, 6, 0.2); color: #FDE68A; border: 1px solid rgba(217, 119, 6, 0.4); }
+    .badge-navy { background: rgba(255, 255, 255, 0.12); color: #FFFFFF; border: 1px solid rgba(255, 255, 255, 0.2); }
+
+    .hero-title {
+      font-size: 34px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 14px;
+      letter-spacing: -0.5px;
+    }
+
+    .hero-title span {
+      color: #FBBF24;
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: #E2E8F0;
+      max-width: 860px;
+      line-height: 1.6;
+      font-weight: 400;
+    }
+
+    /* Interactive Navigation Bar */
+    .showcase-nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--slate-200);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-tabs {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding: 12px 0;
+      scrollbar-width: none;
+    }
+
+    .nav-tabs::-webkit-scrollbar { display: none; }
+
+    .tab-btn {
+      background: transparent;
+      border: 1px solid transparent;
+      padding: 8px 18px;
+      border-radius: var(--radius-md);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--slate-600);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tab-btn:hover {
+      background: var(--slate-100);
+      color: var(--slate-900);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #FFFFFF;
+      border-color: var(--primary-dark);
+      box-shadow: 0 2px 8px rgba(13, 122, 87, 0.3);
+    }
+
+    /* Section Styles */
+    section {
+      padding: 50px 0;
+    }
+
+    .section-header {
+      margin-bottom: 35px;
+    }
+
+    .section-tag {
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: var(--primary);
+      letter-spacing: 1px;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .section-title {
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--slate-900);
+      letter-spacing: -0.5px;
+    }
+
+    .section-desc {
+      font-size: 14px;
+      color: var(--slate-600);
+      margin-top: 6px;
+      max-width: 780px;
+    }
+
+    /* Personas Bento Grid */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 20px;
+    }
+
+    .persona-card {
+      background: var(--surface);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .persona-card:hover {
+      transform: translateY(-3px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .persona-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+    }
+
+    .persona-card.web::before { background: var(--primary); }
+    .persona-card.mobile::before { background: var(--accent); }
+
+    .persona-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .persona-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .persona-card.web .persona-avatar { background: var(--primary-light); }
+    .persona-card.mobile .persona-avatar { background: var(--accent-light); }
+
+    .persona-name {
+      font-size: 16px;
+      font-weight: 800;
+      color: var(--slate-900);
+    }
+
+    .persona-role {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--slate-500);
+    }
+
+    .persona-needs {
+      font-size: 13px;
+      color: var(--slate-600);
+      margin-bottom: 14px;
+      line-height: 1.5;
+    }
+
+    .persona-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .mini-chip {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      background: var(--slate-100);
+      color: var(--slate-700);
+    }
+
+    /* Feature Deep Dive Matrix */
+    .feature-card {
+      background: var(--surface);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      margin-bottom: 30px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-top {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 15px;
+      border-bottom: 1px solid var(--slate-200);
+      padding-bottom: 20px;
+      margin-bottom: 24px;
+    }
+
+    .feature-title-block h3 {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--slate-900);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feature-title-block p {
+      font-size: 13px;
+      color: var(--slate-600);
+      margin-top: 4px;
+    }
+
+    .feature-num {
+      background: var(--primary);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 8px;
+    }
+
+    .feature-dual-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .feature-dual-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dual-pane {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+    }
+
+    .pane-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px dashed var(--slate-300);
+    }
+
+    .pane-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .pane-web { color: var(--primary); }
+    .pane-mobile { color: var(--accent); }
+
+    .pane-users {
+      font-size: 11px;
+      font-weight: 700;
+      background: #FFFFFF;
+      padding: 3px 10px;
+      border-radius: 9999px;
+      border: 1px solid var(--slate-200);
+      color: var(--slate-600);
+    }
+
+    .feature-list {
+      list-style: none;
+      space-y: 8px;
+    }
+
+    .feature-list li {
+      font-size: 12.5px;
+      color: var(--slate-700);
+      margin-bottom: 8px;
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      line-height: 1.5;
+    }
+
+    .feature-list li strong {
+      color: var(--slate-900);
+      font-weight: 700;
+    }
+
+    .feature-list li::before {
+      content: '✔';
+      font-size: 11px;
+      color: var(--primary);
+      margin-top: 2px;
+      flex-shrink: 0;
+    }
+
+    .pane-mobile .feature-list li::before {
+      color: var(--accent);
+    }
+
+    /* Interactive Workflow Visualizer */
+    .workflow-box {
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      padding: 30px;
+      margin-bottom: 30px;
+    }
+
+    .step-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+      position: relative;
+    }
+
+    .step-card {
+      background: var(--slate-50);
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      position: relative;
+    }
+
+    .step-num {
+      width: 26px;
+      height: 26px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .step-card h4 {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--slate-900);
+      margin-bottom: 6px;
+    }
+
+    .step-card p {
+      font-size: 12px;
+      color: var(--slate-600);
+      line-height: 1.5;
+    }
+
+    /* Comparison Table */
+    .table-responsive {
+      overflow-x: auto;
+      background: #FFFFFF;
+      border: 1px solid var(--slate-200);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 13px;
+    }
+
+    th {
+      background: var(--slate-100);
+      color: var(--slate-800);
+      font-weight: 800;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--slate-200);
+      white-space: nowrap;
+    }
+
+    td {
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--slate-100);
+      color: var(--slate-700);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--slate-50);
+    }
+
+    .tag-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .tag-emerald { background: var(--primary-light); color: var(--primary-dark); }
+    .tag-amber { background: var(--accent-light); color: #B45309; }
+    .tag-blue { background: #E0F2FE; color: #0369A1; }
+
+    /* Footer */
+    footer {
+      background: var(--navy);
+      color: #94A3B8;
+      padding: 40px 0;
+      border-top: 1px solid var(--slate-800);
+      font-size: 13px;
+      text-align: center;
+    }
+
+    footer p {
+      margin-bottom: 6px;
+    }
+
+    footer strong {
+      color: #FFFFFF;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO HEADER -->
+  <header class="hero">
+    <div class="container">
+      <div class="hero-badge-strip">
+        <span class="badge badge-emerald">🕌 Halal Tourism Authority</span>
+        <span class="badge badge-amber">🌴 Cultural & Heritage Tourism</span>
+        <span class="badge badge-navy">✨ Web & Mobile Parity System</span>
+      </div>
+      <h1 class="hero-title">Hermosa-Tourism: <span>System & Features</span> Showcase</h1>
+      <p class="hero-sub">
+        A comprehensive architecture and role-based feature showcase for the City Government of Zamboanga, the City Tourism & Islamic Affairs Office, local tour operators, MSMEs, and visiting pilgrims across Western Mindanao.
+      </p>
+    </div>
+  </header>
+
+  <!-- STICKY SUB-NAV -->
+  <div class="showcase-nav">
+    <div class="container">
+      <div class="nav-tabs">
+        <button class="tab-btn active" onclick="scrollToSection('personas')">👥 User Personas</button>
+        <button class="tab-btn" onclick="scrollToSection('features')">🔍 Feature-by-Feature Deep Dive</button>
+        <button class="tab-btn" onclick="scrollToSection('workflows')">⚡ How Web & Mobile Interact</button>
+        <button class="tab-btn" onclick="scrollToSection('matrix')">📋 Full System Matrix</button>
+      </div>
+    </div>
+  </div>
+
+  <main class="container">
+
+    <!-- SECTION 1: USER PERSONAS -->
+    <section id="personas">
+      <div class="section-header">
+        <span class="section-tag">Target Audience & System Stakeholders</span>
+        <h2 class="section-title">Who Uses the System?</h2>
+        <p class="section-desc">The platform serves two complementary user groups: Administrative operators on the desktop Web Admin and pilgrims, travelers, local MSMEs, and guides on Mobile.</p>
+      </div>
+
+      <div class="persona-grid">
+        <!-- Persona 1: Web Admin -->
+        <div class="persona-card web">
+          <div class="persona-header">
+            <div class="persona-avatar">🏛️</div>
+            <div>
+              <div class="persona-name">City Tourism Officer</div>
+              <div class="persona-role">Web Admin User</div>
+            </div>
+          </div>
+          <p class="persona-needs">
+            Needs an executive command dashboard to verify Halal certificates, dispatch licensed multilingual tour guides, manage tour packages, and generate official LGU compliance reports.
+          </p>
+          <div class="persona-tags">
+            <span class="mini-chip">Executive Overview</span>
+            <span class="mini-chip">Guide Dispatch</span>
+            <span class="mini-chip">Official Reports</span>
+          </div>
+        </div>
+
+        <!-- Persona 2: Mosque & Heritage Inspector -->
+        <div class="persona-card web">
+          <div class="persona-header">
+            <div class="persona-avatar">🕌</div>
+            <div>
+              <div class="persona-name">Mosque & Heritage Inspector</div>
+              <div class="persona-role">Web Admin User</div>
+            </div>
+          </div>
+          <p class="persona-needs">
+            Conducts on-site verification of historical masjids, verifies running water wudu ablution stations, female prayer mezzanines, and Qibla compass bearing calibration.
+          </p>
+          <div class="persona-tags">
+            <span class="mini-chip">Mosque Facilities</span>
+            <span class="mini-chip">Wudu Verification</span>
+            <span class="mini-chip">Qibla Accuracy</span>
+          </div>
+        </div>
+
+        <!-- Persona 3: Muslim Pilgrim & Tourist -->
+        <div class="persona-card mobile">
+          <div class="persona-header">
+            <div class="persona-avatar">🧕</div>
+            <div>
+              <div class="persona-name">Pilgrim / Traveler</div>
+              <div class="persona-role">Mobile App User</div>
+            </div>
+          </div>
+          <p class="persona-needs">
+            Requires real-time Zamboanga prayer calculation, Qibla compass, filterable masjid directories (running water wudu stations, female sections), and curated cultural tour packages.
+          </p>
+          <div class="persona-tags">
+            <span class="mini-chip">Qibla & Prayer</span>
+            <span class="mini-chip">Mosque Finder</span>
+            <span class="mini-chip">Tour Packages</span>
+          </div>
+        </div>
+
+        <!-- Persona 4: Accredited Tour Guide -->
+        <div class="persona-card mobile">
+          <div class="persona-header">
+            <div class="persona-avatar">🧑‍💼</div>
+            <div>
+              <div class="persona-name">Licensed Tour Guide</div>
+              <div class="persona-role">Mobile App User</div>
+            </div>
+          </div>
+          <p class="persona-needs">
+            Receives real-time tour dispatch alerts from the Web Admin, checks incoming pilgrim manifest rosters, and reviews language requirements (English, Chavacano, Tausug, Arabic).
+          </p>
+          <div class="persona-tags">
+            <span class="mini-chip">Guide Dispatch View</span>
+            <span class="mini-chip">Tour Manifest</span>
+            <span class="mini-chip">Itinerary Route</span>
+          </div>
+        </div>
+
+        <!-- Persona 5: Local Food Stall / MSME -->
+        <div class="persona-card mobile">
+          <div class="persona-header">
+            <div class="persona-avatar">🍲</div>
+            <div>
+              <div class="persona-name">Local MSME Vendor</div>
+              <div class="persona-role">Mobile / Public Web User</div>
+            </div>
+          </div>
+          <p class="persona-needs">
+            Submits a free, self-declaration Halal affidavit from their smartphone (confirming no pork, alcohol, or segregated utensils) to gain official Tier 2 visibility on the tourist map.
+          </p>
+          <div class="persona-tags">
+            <span class="mini-chip">Self-Declaration</span>
+            <span class="mini-chip">Tier 2 Badge</span>
+            <span class="mini-chip">Affordable Intake</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 2: FEATURE-BY-FEATURE DEEP DIVE -->
+    <section id="features">
+      <div class="section-header">
+        <span class="section-tag">Core Functionality Matrix</span>
+        <h2 class="section-title">Feature-by-Feature Deep Dive</h2>
+        <p class="section-desc">Detailed breakdown of how each feature operates, what the Web UI and Mobile UI look like, who interacts with them, and their exact operational impact.</p>
+      </div>
+
+      <!-- Feature 1 -->
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-title-block">
+            <h3><span class="feature-num">01</span> Place & Mosque Directory (Halal & Cultural Map)</h3>
+            <p>Comprehensive GIS mapping of accredited Halal eateries, historical masjids, and cultural landmarks.</p>
+          </div>
+          <span class="tag-pill tag-emerald">Heritage & Places</span>
+        </div>
+
+        <div class="feature-dual-grid">
+          <!-- Web Pane -->
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-web">💻 Web Admin UI</span>
+              <span class="pane-users">Tourism Registry Clerk & Officers</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Directory Management:</strong> Add, edit, and filter landmarks, restaurants, and masjids across Zamboanga.</li>
+              <li><strong>Halal Tier Badging:</strong> Assign Tier 1 (NCMF Certified) or Tier 2 (Muslim-Owned / Halal Friendly) status.</li>
+              <li><strong>Facility Auditing:</strong> Log prayer room availability, separate ablution stations, and wheelchair accessibility.</li>
+              <li><strong>Interactive Coordinates:</strong> Visual GPS coordinate mapping and real-time category filtering.</li>
+            </ul>
+          </div>
+          <!-- Mobile Pane -->
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-mobile">📱 Mobile App UI</span>
+              <span class="pane-users">Tourists, Pilgrims & Local Residents</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Interactive Map:</strong> Real-time distance calculation, category pills (Mosques, Food, Heritage), and directional routing.</li>
+              <li><strong>Verified Details:</strong> Contact phone numbers, operating hours, Halal certification numbers, and user ratings.</li>
+              <li><strong>Ablution & Amenity HUD:</strong> Instant visibility into running wudu facilities and dedicated female prayer areas.</li>
+              <li><strong>1-Tap Navigation:</strong> Direct walking and driving directions to any verified destination.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 2 -->
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-title-block">
+            <h3><span class="feature-num">02</span> Packages & Bookings (Dynamic Catalog & Guide Dispatch)</h3>
+            <p>Tour booking queue management and real-time dispatch of accredited multilingual guides.</p>
+          </div>
+          <span class="tag-pill tag-amber">Live Data Parity</span>
+        </div>
+
+        <div class="feature-dual-grid">
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-web">💻 Web Admin UI</span>
+              <span class="pane-users">Chief Tourism Officer & Dispatchers</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Dynamic Package Editor:</strong> Edit pricing (₱6,500, ₱2,400, Free), duration, and inclusion bullet points for Packages A, B, and C.</li>
+              <li><strong>Instant Mobile Reflection:</strong> Admin edits instantly update the mobile booking catalog in real-time.</li>
+              <li><strong>Bookings Queue:</strong> Review incoming inquiries with pax count, travel dates, and dietary requests.</li>
+              <li><strong>1-Click Guide Dispatch:</strong> Assign accredited guides with language tags (Tausug, Chavacano, Arabic, English).</li>
+            </ul>
+          </div>
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-mobile">📱 Mobile App UI</span>
+              <span class="pane-users">Pilgrims & Accredited Tour Guides</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Interactive Package Selector:</strong> Explore Package A (All-Inclusive), Package B (Flexi-Pass), or Package C (DIY Free).</li>
+              <li><strong>Instant Booking Modal:</strong> Select travel date, number of pax, and submit inquiry directly to the City Tourism Office.</li>
+              <li><strong>Tour Guide Dispatch Cockpit:</strong> Dedicated screen for assigned guides showing tourist roster, itinerary stops, and contacts.</li>
+              <li><strong>Real-Time Status:</strong> Travelers see assigned guide profile, photo, badge accreditation, and phone number.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 3 -->
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-title-block">
+            <h3><span class="feature-num">03</span> MSME Halal Onboarding & Self-Declaration Queue</h3>
+            <p>Democratized, low-barrier intake pipeline for local Muslim-owned street food, satti grills, and cafes.</p>
+          </div>
+          <span class="tag-pill tag-blue">Governance & Inclusivity</span>
+        </div>
+
+        <div class="feature-dual-grid">
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-web">💻 Web Admin UI</span>
+              <span class="pane-users">City Halal Compliance Auditors</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Audit Intake Queue:</strong> Review incoming MSME applications from Basilan, Zamboanga City, and Sulu.</li>
+              <li><strong>Affidavit Verification:</strong> Inspect legal self-declarations (strictly no pork, alcohol, segregated cookware).</li>
+              <li><strong>Status Transitions:</strong> 1-click status update (`Pending` ➔ `Under Audit` ➔ `Approved`).</li>
+              <li><strong>Auto-Publish to Mobile:</strong> Approved vendors automatically get the green "Tier 2 Verified" badge on the tourist map.</li>
+            </ul>
+          </div>
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-mobile">📱 Mobile App UI</span>
+              <span class="pane-users">Local Food Vendors & Street-Food MSMEs</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Public Intake Portal:</strong> Clean, mobile-friendly 4-step wizard to apply with zero bureaucratic fees.</li>
+              <li><strong>Kitchen Affidavit:</strong> Checkboxes declaring meat supplier, kitchen segregation, and musalla availability.</li>
+              <li><strong>Application Tracking:</strong> Track application status using an assigned tracking number (e.g., `MSME-2026-001`).</li>
+              <li><strong>Tourist Visibility:</strong> Once approved, the stall displays photos, signature dishes (e.g., Tausug Satti), and phone number.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 4 -->
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-title-block">
+            <h3><span class="feature-num">04</span> Mosque Facilities & Ablution (Wudu) Inspector</h3>
+            <p>Physical technical audits for Masjids, prayer facilities, and water cleanliness standards.</p>
+          </div>
+          <span class="tag-pill tag-emerald">Islamic Affairs</span>
+        </div>
+
+        <div class="feature-dual-grid">
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-web">💻 Web Admin UI</span>
+              <span class="pane-users">Islamic Affairs Inspectors & Field Auditors</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Ablution Water Verification:</strong> Audits masjids for continuous running potable wudu water.</li>
+              <li><strong>Female Section Inspection:</strong> Verifies dedicated, segregated female prayer halls with privacy curtains.</li>
+              <li><strong>Qibla Precision Mihrab:</strong> Logs compass-calibrated orientation toward the Kaaba in Mecca.</li>
+              <li><strong>Facility Amenities:</strong> Air-cooling, visitor parking, wheelchair ramps, and historical NHCP markers.</li>
+            </ul>
+          </div>
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-mobile">📱 Mobile App UI</span>
+              <span class="pane-users">Muslim Pilgrims & Traveling Families</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Filter Masjids by Amenity:</strong> Filter specifically for masjids with running water wudu or female halls.</li>
+              <li><strong>Mosque Detail Sheet:</strong> View prayer capacity, Friday Jumuah prayer times, history, and photography.</li>
+              <li><strong>Qibla Compass HUD:</strong> On-screen compass calibrated to Zamboanga GPS coordinates pointing to Mecca.</li>
+              <li><strong>Wudu Status Feedback:</strong> Pilgrims can submit community reports on current water flow and cleanliness.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Feature 5 -->
+      <div class="feature-card">
+        <div class="feature-top">
+          <div class="feature-title-block">
+            <h3><span class="feature-num">05</span> Low-Bandwidth Island Offline Sync & Export</h3>
+            <p>Zero-connectivity offline database bundles engineered for remote cultural trails and low-connectivity zones.</p>
+          </div>
+          <span class="tag-pill tag-blue">Island Resiliency</span>
+        </div>
+
+        <div class="feature-dual-grid">
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-web">💻 Web Admin UI</span>
+              <span class="pane-users">System Administrators & Field Officers</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>Sync Bundle Engine:</strong> Compresses all POIs, cultural packages, and emergency contacts into an ultra-lean JSON payload.</li>
+              <li><strong>Registry Export:</strong> Generates official printable PDF reports and CSV datasets for City Council and DOT.</li>
+              <li><strong>Sync Monitoring:</strong> Tracks offline version hashes to ensure field devices receive timely delta updates.</li>
+            </ul>
+          </div>
+          <div class="dual-pane">
+            <div class="pane-header">
+              <span class="pane-title pane-mobile">📱 Mobile App UI</span>
+              <span class="pane-users">Backpackers, Island Travelers & Solo Explorers</span>
+            </div>
+            <ul class="feature-list">
+              <li><strong>1-Click Offline Download:</strong> Pre-cache the entire Zamboanga database before heading off-grid.</li>
+              <li><strong>Zero-Signal Navigation:</strong> Access maps, tour packages, emergency contacts, and mosque wudu info without signal.</li>
+              <li><strong>Automatic Delta Sync:</strong> Seamlessly checks for changes when re-entering Wi-Fi or cellular coverage.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 3: HOW WEB & MOBILE INTERACT (WORKFLOWS) -->
+    <section id="workflows">
+      <div class="section-header">
+        <span class="section-tag">End-to-End Real-Time Pipelines</span>
+        <h2 class="section-title">How Web and Mobile Work Together</h2>
+        <p class="section-desc">Four real-world operational workflows demonstrating seamless two-way data synchronization between Web Admin officers and Mobile travelers.</p>
+      </div>
+
+      <!-- Workflow 1 -->
+      <div class="workflow-box">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--primary);">Workflow A: Package Editing & Live Mobile Reflection</h3>
+        <p style="font-size: 13px; color: var(--slate-600); margin-top: 4px;">Admin updates package inclusions or prices on the Web Admin; mobile travelers see the new details immediately.</p>
+        <div class="step-grid">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <h4>Web Admin Edits</h4>
+            <p>Admin opens <em>Packages & Bookings</em> on Web, clicks "Edit Package A", and updates price or inclusion perks.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <h4>Laravel Cloud API</h4>
+            <p>Database updates `tour_packages` table and invalidates cached catalog responses across edge nodes.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <h4>Mobile App Syncs</h4>
+            <p>Mobile app immediately renders the new price and inclusions without needing an App Store update.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <h4>Tourist Books</h4>
+            <p>Tourist submits booking for the updated package directly on their phone.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Workflow 2 -->
+      <div class="workflow-box">
+        <h3 style="font-size: 16px; font-weight: 800; color: var(--accent);">Workflow B: Tourist Inquiry & Tour Guide Dispatch Pipeline</h3>
+        <p style="font-size: 13px; color: var(--slate-600); margin-top: 4px;">Tourist books a guided tour on mobile; Admin assigns a licensed bilingual guide; guide receives tour details on mobile.</p>
+        <div class="step-grid">
+          <div class="step-card">
+            <div class="step-num">1</div>
+            <h4>Mobile Booking</h4>
+            <p>Tourist selects Package A for 4 pax, inputs travel date, and submits inquiry via Mobile App.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">2</div>
+            <h4>Web Queue Alert</h4>
+            <p>Booking appears instantly in Web Admin's <em>Packages & Bookings</em> queue with unread notification badge.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">3</div>
+            <h4>Admin Dispatches</h4>
+            <p>Admin reviews inquiry and assigns an accredited bilingual guide (e.g., Ustadz Nur-Hassan Ahmad) with confirmation notes.</p>
+          </div>
+          <div class="step-card">
+            <div class="step-num">4</div>
+            <h4>Guide Mobile Roster</h4>
+            <p>Assigned tour appears directly on the Guide's Mobile App dashboard with tourist contact info and itinerary route.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: FULL SYSTEM MATRIX -->
+    <section id="matrix">
+      <div class="section-header">
+        <span class="section-tag">Comprehensive Matrix</span>
+        <h2 class="section-title">Complete System Features Breakdown</h2>
+        <p class="section-desc">Quick reference table mapping every system feature, who uses it, and its exact UI implementation.</p>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th>Feature Name</th>
+              <th>What Does It Do?</th>
+              <th>Web Admin UI & Role</th>
+              <th>Mobile App UI & Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><strong>1. Executive Command Dashboard</strong></td>
+              <td>Central command telemetry, bento counters, live prayer calculations, and GIS pinpoints map.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Tourism Director</span><br>
+                Adaptive banner, stat cards, live map, 1-click registration buttons.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Travelers</span><br>
+                Home screen summary showing featured masjids and regional travel advisories.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>2. Place & Mosque Directory</strong></td>
+              <td>Centralized registry of verified Halal dining, Masjids, and landmarks in Zamboanga.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Data Registry Clerk</span><br>
+                Filterable table, modal create/edit, GPS coordinate picker, image uploads.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Tourists & Pilgrims</span><br>
+                Interactive GIS map with radius search, photos, opening hours, and phone call action.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>3. Packages & Bookings Dispatch</strong></td>
+              <td>Package catalog management (Packages A, B, C), booking queue, and guide dispatch.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Chief Dispatcher</span><br>
+                Live package pricing editor, inquiry approval, guide dropdown assignment.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Pilgrims & Guides</span><br>
+                Package catalog selector, 1-tap booking inquiry modal, Tour Guide assigned schedule.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>4. MSME Halal Self-Declaration</strong></td>
+              <td>Low-barrier intake pipeline for micro-entrepreneurs and native satti stalls to get Tier 2 verified.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Halal Auditor</span><br>
+                Application queue, legal affidavit inspection, 1-click status approve/reject.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Local Vendors</span><br>
+                4-step mobile intake wizard, kitchen practices checklist, status tracking badge.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>5. Halal Certificate Compliance</strong></td>
+              <td>Compliance monitoring for officially certified Tier 1 NCMF establishments.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Compliance Officer</span><br>
+                Accreditation tracker, issuing body records, 30-day expiration warning chips.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Discerning Diners</span><br>
+                Displays official NCMF certificate badge and Halal Board verification number on cards.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>6. Mosque Facilities & Wudu Audits</strong></td>
+              <td>Verifies running water ablution, separate female sections, and Qibla accuracy.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Mosque Inspector</span><br>
+                Technical audit checklist, water supply verification, female mezzanine validator.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Muslim Pilgrims</span><br>
+                Amenity filter (Running Wudu, Female Section, AC), Qibla alignment HUD indicator.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>7. Pilgrim Review Moderation</strong></td>
+              <td>Review feedback moderation, rating aggregation, and sentiment moderation.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Content Moderator</span><br>
+                Review queue, single review approval, "Approve All Verified" batch action.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Pilgrims & Diners</span><br>
+                5-star rating submission, photo uploads, community review timeline.
+              </td>
+            </tr>
+            <tr>
+              <td><strong>8. Low-Bandwidth Island Sync & Reports</strong></td>
+              <td>Offline data bundle generation for continuous exploration with zero cell signal, plus printable PDF/CSV exports.</td>
+              <td>
+                <span class="tag-pill tag-emerald">Web: Technical Admin</span><br>
+                JSON sync payload bundler, printable PDF report generator, CSV data exporter.
+              </td>
+              <td>
+                <span class="tag-pill tag-amber">Mobile: Solo Explorers</span><br>
+                1-click download offline package, cached SQLite database, zero-signal map viewing.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      <p><strong>Hermosa-Tourism Command Center</strong></p>
+      <p>City Government of Zamboanga • City Tourism & Islamic Affairs Office • Western Mindanao & Sulu Archipelago</p>
+      <p style="font-size: 11px; margin-top: 10px; color: #64748B;">Built with React 18, Tailwind CSS v4, Laravel 11 REST API, and React Native / Expo.</p>
+    </div>
+  </footer>
+
+  <script>
+    function scrollToSection(id) {
+      const el = document.getElementById(id);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+        // Update active tab button
+        document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+      }
+    }
+  </script>
+</body>
+</html>
